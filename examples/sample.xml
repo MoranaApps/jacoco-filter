@@ -5,24 +5,31 @@
             <method name="doWork" desc="()V" line="10">
                 <counter type="INSTRUCTION" missed="5" covered="10"/>
                 <counter type="LINE" missed="1" covered="3"/>
+                <counter type="BRANCH" missed="1" covered="1"/>
+                <counter type="METHOD" missed="0" covered="1"/>
             </method>
             <method name="getData" desc="()Ljava/lang/String;" line="20">
                 <counter type="INSTRUCTION" missed="2" covered="8"/>
+                <counter type="COMPLEXITY" missed="1" covered="0"/>
             </method>
             <counter type="INSTRUCTION" missed="7" covered="18"/>
             <counter type="LINE" missed="1" covered="3"/>
+            <counter type="CLASS" missed="0" covered="1"/>
         </class>
         <class name="com/example/AnotherClass" sourcefilename="AnotherClass.java">
             <method name="doWork" desc="()V" line="10">
-                <counter type="INSTRUCTION" missed="5" covered="10"/>
-                <counter type="LINE" missed="1" covered="3"/>
+                <counter type="INSTRUCTION" missed="3" covered="7"/>
+                <counter type="LINE" missed="0" covered="4"/>
+                <counter type="BRANCH" missed="2" covered="2"/>
             </method>
             <method name="getData" desc="()Ljava/lang/String;" line="20">
-                <counter type="INSTRUCTION" missed="2" covered="8"/>
+                <counter type="INSTRUCTION" missed="1" covered="4"/>
+                <counter type="METHOD" missed="1" covered="0"/>
             </method>
-            <counter type="INSTRUCTION" missed="7" covered="18"/>
-            <counter type="LINE" missed="1" covered="3"/>
+            <counter type="INSTRUCTION" missed="4" covered="11"/>
+            <counter type="LINE" missed="0" covered="4"/>
         </class>
-        <counter type="INSTRUCTION" missed="7" covered="18"/>
+        <counter type="INSTRUCTION" missed="11" covered="29"/>
+        <counter type="COMPLEXITY" missed="2" covered="1"/>
     </package>
 </report>
