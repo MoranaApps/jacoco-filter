@@ -2,17 +2,23 @@ from pathlib import Path
 
 from jacoco_filter.cli import parse_arguments
 from jacoco_filter.parser import JacocoParser
+from jacoco_filter.rules import load_filter_rules
 
 if __name__ == "__main__":
+    # Parse CLI arguments
     args = parse_arguments()
     print("Parsed arguments:")
     print(f"  input:  {args.input}")
     print(f"  rules:  {args.rules}")
     print(f"  output: {args.output}")
 
+    # Parse JaCoCo XML report
     parser = JacocoParser(xml_path=args.input)
     report = parser.parse()
+    print(f"✅ Parsed report with {len(report.packages)} package(s)")
 
-    print(f"Found {len(report.packages)} packages")
-
-
+    # Load filter rules
+    rules = load_filter_rules(args.rules)
+    print(f"✅ Loaded {len(rules)} rule(s):")
+    for rule in rules:
+        print(f"   - {rule.scope}:{rule.pattern}")
