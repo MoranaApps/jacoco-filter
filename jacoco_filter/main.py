@@ -14,7 +14,10 @@ from jacoco_filter.serializer import ReportSerializer
 
 def main():
     try:
+        print("✅ jacoco-filter started")
+
         args = parse_arguments()
+        print(f"Args: {args}")
 
         print("📥 Loading report...")
         parser = JacocoParser(args.input)
