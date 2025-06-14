@@ -8,7 +8,12 @@ class CounterUpdater:
 
     def apply(self, report: JacocoReport):
         for package in report.packages:
+            # Clean non-instruction counters at package level too (optional)
+            self._clean_non_instruction_counters(package.counters)
+
             for cls in package.classes:
+                self._clean_non_instruction_counters(cls.counters)
+
                 for method in cls.methods:
                     self._clean_non_instruction_counters(method.counters)
 
@@ -40,7 +45,19 @@ class CounterUpdater:
         # Create new Counter and XML element
         if children and hasattr(children[0], "xml_element"):
             import lxml.etree as ET
-            new_elem = ET.Element("counter", type="INSTRUCTION", missed=str(total_missed), covered=str(total_covered))
+            parent_elem = children[0].xml_element.getparent()
+
+            if parent_elem is not None:
+                # Remove all existing instruction counters
+                for old_counter in parent_elem.findall("counter"):
+                    if old_counter.get("type") == "INSTRUCTION":
+                        parent_elem.remove(old_counter)
+
+                # Create and insert the new one
+                new_elem = ET.Element("counter", type="INSTRUCTION",
+                                      missed=str(total_missed),
+                                      covered=str(total_covered))
+                parent_elem.append(new_elem)
         else:
             new_elem = None
 
