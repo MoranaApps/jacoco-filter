@@ -5,6 +5,7 @@ from jacoco_filter.counter_updater import CounterUpdater
 from jacoco_filter.filter_engine import FilterEngine
 from jacoco_filter.parser import JacocoParser
 from jacoco_filter.rules import load_filter_rules
+from jacoco_filter.serializer import ReportSerializer
 
 if __name__ == "__main__":
     # Parse CLI arguments
@@ -40,3 +41,8 @@ if __name__ == "__main__":
                 print(f"[DEBUG] Class '{cls.name}' counter {counter.type}: missed={counter.missed}, covered={counter.covered}")
 
     print("✅ Counters updated successfully.")
+
+    serializer = ReportSerializer(report)
+    serializer.write_to_file(args.output)
+
+    print(f"✅ Filtered report saved to: {args.output}")

@@ -21,14 +21,23 @@ class FilterEngine:
                 if self._matches(cls.name, "class"):
                     print(f"[DEBUG] Removing class: {cls.name}")
                     self.stats["classes_removed"] += 1
-                    continue  # Skip entire class and its methods
+                    # Remove XML element
+                    parent_elem = cls.xml_element.getparent()
+                    if parent_elem is not None:
+                        parent_elem.remove(cls.xml_element)
+                    continue
 
                 remaining_methods = []
                 for method in cls.methods:
                     if self._matches(method.name, "method"):
                         print(f"[DEBUG] Removing method: {method.name} in class {cls.name}")
                         self.stats["methods_removed"] += 1
-                        continue  # Skip matched method
+                        # Remove XML element
+                        if cls.xml_element is not None:
+                            method_elem = method.xml_element
+                            if method_elem is not None:
+                                cls.xml_element.remove(method_elem)
+                        continue
                     remaining_methods.append(method)
 
                 cls.methods = remaining_methods
