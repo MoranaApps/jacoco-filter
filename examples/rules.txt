@@ -1,0 +1,10 @@
+# Filter out this class entirely
+class:com/example/MyClass
+
+# Filter out any method starting with 'get'
+method:get*
+
+# Invalid examples (should trigger errors if uncommented)
+# class
+# method:
+# invalidline

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report name="Test Report">
+    <package name="com/example">
+        <class name="com/example/MyClass" sourcefilename="MyClass.java">
+            <method name="doWork" desc="()V" line="10">
+                <counter type="INSTRUCTION" missed="5" covered="10"/>
+                <counter type="LINE" missed="1" covered="3"/>
+            </method>
+            <method name="getData" desc="()Ljava/lang/String;" line="20">
+                <counter type="INSTRUCTION" missed="2" covered="8"/>
+            </method>
+            <counter type="INSTRUCTION" missed="7" covered="18"/>
+            <counter type="LINE" missed="1" covered="3"/>
+        </class>
+        <counter type="INSTRUCTION" missed="7" covered="18"/>
+    </package>
+</report>

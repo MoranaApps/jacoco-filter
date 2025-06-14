@@ -23,17 +23,25 @@ python3 main.py --input examples/sample.xml --rules examples/rules.txt --output 
 
 ## Rule Format
 
-Each rule must be on a separate line and follow the format:
+Each rule defines a class or method to be **excluded from coverage**.  
+Rules are written in the format:
 
 ```text
 <scope>:<pattern>
 ```
 
-Examples:
+### Supported scopes:
+- `class` — fully-qualified class name (e.g. `com/example/MyClass`)
+- `method` — method name only (e.g. `get*`)
 
+### Wildcards:
+- `*` allowed only at the beginning or end of the pattern
+- Example: `method:get*` filters out any method starting with `get`
+
+### Example rules.txt:
 ```text
-class:com.example.MyClass
-method:doSomething*
+class:com/example/MyClass
+method:get*
 ```
 
 ## Requirements
