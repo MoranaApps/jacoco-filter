@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from jacoco_filter.cli import parse_arguments
+from jacoco_filter.filter_engine import FilterEngine
 from jacoco_filter.parser import JacocoParser
 from jacoco_filter.rules import load_filter_rules
 
@@ -22,3 +23,9 @@ if __name__ == "__main__":
     print(f"✅ Loaded {len(rules)} rule(s):")
     for rule in rules:
         print(f"   - {rule.scope}:{rule.pattern}")
+
+    # Apply filtering
+    engine = FilterEngine(rules)
+    engine.apply(report)
+
+    print(f"✅ Filter applied: {engine.stats['classes_removed']} class(es) and {engine.stats['methods_removed']} method(s) removed.")
