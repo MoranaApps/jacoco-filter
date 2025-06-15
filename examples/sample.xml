@@ -1,35 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <report name="Test Report">
-    <package name="com/example">
-        <class name="com/example/MyClass" sourcefilename="MyClass.java">
-            <method name="doWork" desc="()V" line="10">
-                <counter type="INSTRUCTION" missed="5" covered="10"/>
-                <counter type="LINE" missed="1" covered="3"/>
-                <counter type="BRANCH" missed="1" covered="1"/>
-                <counter type="METHOD" missed="0" covered="1"/>
-            </method>
-            <method name="getData" desc="()Ljava/lang/String;" line="20">
-                <counter type="INSTRUCTION" missed="2" covered="8"/>
-                <counter type="COMPLEXITY" missed="1" covered="0"/>
-            </method>
-            <counter type="INSTRUCTION" missed="7" covered="18"/>
-            <counter type="LINE" missed="1" covered="3"/>
-            <counter type="CLASS" missed="0" covered="1"/>
-        </class>
-        <class name="com/example/AnotherClass" sourcefilename="AnotherClass.java">
-            <method name="doWork" desc="()V" line="10">
-                <counter type="INSTRUCTION" missed="3" covered="7"/>
-                <counter type="LINE" missed="0" covered="4"/>
-                <counter type="BRANCH" missed="2" covered="2"/>
-            </method>
-            <method name="getData" desc="()Ljava/lang/String;" line="20">
-                <counter type="INSTRUCTION" missed="1" covered="4"/>
-                <counter type="METHOD" missed="1" covered="0"/>
-            </method>
-            <counter type="INSTRUCTION" missed="4" covered="11"/>
-            <counter type="LINE" missed="0" covered="4"/>
-        </class>
-        <counter type="INSTRUCTION" missed="11" covered="29"/>
-        <counter type="COMPLEXITY" missed="2" covered="1"/>
+
+    <package name="pkg/file_rule">
+        <class name="pkg/file_rule/AnotherClass" sourcefilename="AnotherClass.java">
+            <method name="doWork" desc="()V" line="10"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+        <class name="pkg/file_rule/HelperUtil" sourcefilename="HelperUtil.scala">
+            <method name="assist" desc="()V" line="15"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+        <class name="pkg/file_rule/TestSpec" sourcefilename="TestSpec.scala">
+            <method name="testAll" desc="()V" line="5"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
     </package>
-</report>
+
+    <package name="pkg/class_rule">
+        <class name="com/example/MyClass" sourcefilename="MyClass.java">
+            <method name="doWork" desc="()V" line="5"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+        <class name="com/extra/example/ExtraClass" sourcefilename="ExtraClass.java">
+            <method name="extraMethod" desc="()V" line="10"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+        <class name="com/example/util/DataHelper" sourcefilename="DataHelper.java">
+            <method name="assist" desc="()V" line="12"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+    </package>
+
+    <package name="pkg/method_rule">
+        <class name="com/example/util/MyHelper" sourcefilename="HelperUtil.scala">
+            <method name="getInternalState" desc="()V" line="8"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+        <class name="com/example/TestSpec" sourcefilename="TestSpec.scala">
+            <method name="testSomething" desc="()V" line="6"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+        <class name="com/example/AnotherClass" sourcefilename="AnotherClass.java">
+            <method name="getName" desc="()Ljava/lang/String;" line="12"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+        <class name="pkg/method_rule/GlobalGetter" sourcefilename="Generic.java">
+            <method name="getData" desc="()Ljava/lang/String;" line="20"><counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></method>
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="5"/><counter type="METHOD" missed="0" covered="1"/></class>
+    </package>
+
+    <counter type="INSTRUCTION" missed="0" covered="100"/><counter type="LINE" missed="0" covered="50"/><counter type="METHOD" missed="0" covered="10"/></report>

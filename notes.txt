@@ -1,0 +1,5 @@
+python3 run_filter.py --input examples/sample.xml --rules examples/rules.txt --output output.xml
+
+python3 -m jacoco_filter --input examples/sample.xml --rules examples/rules.txt --output output.xml
+
+./dist/jacoco-filter/jacoco-filter --input examples/sample.xml --rules examples/rules.txt --output output.xml
