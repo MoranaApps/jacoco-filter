@@ -1,10 +1,20 @@
-# Filter out this class entirely
-class:com/example/MyClass
+# Rules for excluding elements from JaCoCo report
+# Syntax: <scope>:<pattern>
+# Use wildcards (*, ?, [seq]) as per fnmatchcase rules (case-sensitive)
+# Lines starting with '#' are ignored as comments
 
-# Filter out any method starting with 'get'
-method:get*
+# --- File Rules ---
+file:*Spec.scala                                    # All Scala test specs
+file:HelperUtil.scala                               # Helper utilities
+file:AnotherClass.java                              # Specific Java class file
 
-# Invalid examples (should trigger errors if uncommented)
-# class
-# method:
-# invalidline
+# --- Class Rules ---
+class:com.example.MyClass                           # Exact class match
+class:com.extra.example.*                                 # All classes in the com.extra.example package
+class:com.example.util.*Helper                      # All helper classes under util
+
+# --- Method Rules ---
+method:get*                                         # Match all getter-style methods globally
+method:AnotherClass#get*                            # Match all getters in AnotherClass
+method:com.example.util.MyHelper#getInternalState   # Target a specific method with FQCN
+method:TestSpec#test*                               # Match all test* methods in TestSpec
