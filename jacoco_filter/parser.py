@@ -6,11 +6,14 @@ from jacoco_filter.model import JacocoReport, Package, Class, Method, Counter
 
 
 class JacocoParser:
-    def __init__(self, xml_path: Path):
-        self.xml_path = xml_path
+
+    def __init__(self, input_path: Path):
+        self.input_path = input_path
 
     def parse(self) -> JacocoReport:
-        tree = etree.parse(str(self.xml_path))
+        print(f"📄 Parsing {self.input_path}")
+
+        tree = etree.parse(str(self.input_path))
         root = tree.getroot()
 
         report = JacocoReport(xml_element=root)

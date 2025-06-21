@@ -2,6 +2,17 @@
 
 A command-line tool to filter [JaCoCo](https://www.jacoco.org/jacoco/) XML coverage reports based on class and method patterns, and to adjust coverage counters accordingly.
 
+- [Example usage](#-example-usage)
+- [Controlling the Application](#-controlling-the-application)
+- [Requirements](#requirements)
+- [Rule Format](#rule-format)
+  - [Supported Scopes](#supported-scopes)
+  - [Wildcards](#wildcards)
+  - [Valid Rule Examples](#valid-rule-examples)
+    - [File](#file)
+    - [Class](#class)
+    - [Method](#method)
+
 ---
 
 ## 🧪 Example usage
@@ -9,6 +20,50 @@ A command-line tool to filter [JaCoCo](https://www.jacoco.org/jacoco/) XML cover
 ```bash
 python3 main.py --input examples/sample.xml --rules examples/rules.txt --output output.xml
 ```
+
+## 🔧 Controlling the Application
+
+`jacoco-filter` provides powerful CLI options to simplify working with large and modular projects. It allows you to specify multiple input globs and define exclusions.
+
+| Argument           | Type             | Description                                                                        | Example                                                |
+|--------------------|------------------|------------------------------------------------------------------------------------|--------------------------------------------------------|
+| `--inputs`         | list of globs    | Glob patterns or directories to recursively collect input XML files.               | `"target/**/jacoco.xml"`, `"modules/*/coverage-*.xml"` |
+| `--exclude-paths`  | list of globs    | Glob patterns to ignore certain files or folders during discovery. Case-sensitive. | `"**/test/**"`, `"*/legacy/**"`                        |
+| `--rules`          | file path        | Text file with filtering rules for class/method/file exclusions.                   | `"rules/exclude.txt"`                                  |
+
+>- Globs are **explicit**: patterns must include filenames (e.g., `**/jacoco.xml`), not just directory paths.
+>- Pattern matching uses `fnmatchcase()` — case-sensitive and shell-style (`*`, `?`, `[abc]`).
+>- You can mix multiple globs and directories in `--inputs` and `--exclude-paths`.
+
+---
+
+### 📦 Output Handling
+
+Regardless of how many inputs are discovered:
+
+- The tool writes a **separate filtered XML** file next to each input.
+- The output file uses the same folder, with a new **filename defined by** `--output` (e.g. `jacoco.filtered.xml`).
+
+---
+
+#### Example
+
+If the following input is found:
+
+```text
+modules/core/target/site/jacoco.xml
+```
+
+and you run:
+
+```bash
+jacoco-filter \
+--inputs "modules/**/jacoco.xml" \
+--rules rules.txt \
+--output filtered
+```
+
+Then the output will be `modules/core/target/site/jacoco.filtered.xml` for the input file `modules/core/target/site/jacoco.xml`.
 
 ## Requirements
 
