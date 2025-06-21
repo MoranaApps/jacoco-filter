@@ -3,3 +3,8 @@ python3 run_filter.py --input examples/sample.xml --rules examples/rules.txt --o
 python3 -m jacoco_filter --input examples/sample.xml --rules examples/rules.txt --output output.xml
 
 ./dist/jacoco-filter/jacoco-filter --input examples/sample.xml --rules examples/rules.txt --output output.xml
+
+
+python3 run_filter.py --inputs "examples/project/**/sample.xml" "example/module*/**/*.xml" --exclude-paths "**/module_A/**" --rules examples/rules.txt --output merged-output.xml
+
+python3 run_filter.py --inputs "examples/project/**/sample.xml" "example/module*/**/*.xml" --exclude-paths "**/module_A/**" --rules examples/rules.txt
