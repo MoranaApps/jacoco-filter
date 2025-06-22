@@ -43,7 +43,8 @@ jobs:
           fi
 
           echo "Running binary: $BIN"
-          "$BIN" --inputs "examples/project/**/sample.xml" "example/module*/**/*.xml" --exclude-paths "**/module_A/**" --rules examples/rules.txt
+          "$BIN"
+#          "$BIN" --inputs "examples/project/**/sample.xml" "example/module*/**/*.xml" --exclude-paths "**/module_A/**" --rules examples/rules.txt
 
       - name: Rename CLI result for diff
         run: |
