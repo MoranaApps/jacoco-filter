@@ -29,7 +29,7 @@ def main():
             raise FileNotFoundError("No input files remain after exclusions.")
 
         for rule in args["rules"]:
-            print(f"   ↳ {rule.scope}:{rule.pattern}")
+            print(f"   {rule.scope}:{rule.pattern}")
 
         for file in input_files:
             print(f"Loading report '{file}' ...")
@@ -40,7 +40,7 @@ def main():
             print("Applying filters...")
             engine = FilterEngine(args["rules"])
             engine.apply(report)
-            print(f"   ↳ Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)")
+            print(f"   Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)")
 
             print("Updating counters...")
             updater = CounterUpdater()

@@ -60,18 +60,18 @@ jobs:
             BIN="./dist/jacoco-filter/jacoco-filter"
           fi
 
-          echo "🚀 Running binary: $BIN"
+          echo "Running binary: $BIN"
           "$BIN" --config jacoco_filter.toml
 
       - name: Compare filtered outputs
         run: |
-          echo "🔍 Comparing filtered results"
+          echo "Comparing filtered results"
           diff -u ./examples/project/module_B/another/sample.filtered.cli.xml ./examples/project/module_B/another/sample.filtered.xml
           diff -u ./examples/project/module_C/target/sample.filtered.cli.xml ./examples/project/module_C/target/sample.filtered.xml
         shell: bash
 
       - name: Compare output with expected file
         run: |
-          echo "🔍 Comparing with expected result"
+          echo "Comparing with expected result"
           diff -u examples/project/module_B/another/sample.filtered.xml examples/sample.expected.xml
         shell: bash
