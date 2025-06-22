@@ -81,12 +81,12 @@ def parse_arguments() -> dict:
 
     if args.rules:
         # when rules are provided via CLI
-        print(f"   ↳ Loaded from file: {args.rules}")
+        print(f"   Loaded from file: {args.rules}")
         merged["rules"] = load_filter_rules(args.rules)
 
     elif "rules" in config:
         # when rules are defined in the config
-        print("   ↳ Loaded inline_rules from config")
+        print("   Loaded inline_rules from config")
         for raw_line in config.get("rules", []):
             stripped = raw_line.strip()
             if stripped.startswith("#"):
@@ -105,7 +105,7 @@ def parse_arguments() -> dict:
         print("No rules provided. Use --rules or define rules in the config.")
 
     # -----------
-    print("🔧 Final configuration:")
+    print("Final configuration:")
     print(f"   inputs: {merged['inputs']}")
     print(f"   exclude_paths: {merged['exclude_paths']}")
     print(f"   rules: {merged['rules']}")

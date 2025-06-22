@@ -14,7 +14,7 @@ from jacoco_filter.serializer import ReportSerializer
 
 def main():
     try:
-        print("✅ jacoco-filter started")
+        print("jacoco-filter started")
 
         args = parse_arguments()
         root_dir = Path.cwd()
@@ -29,32 +29,32 @@ def main():
             raise FileNotFoundError("No input files remain after exclusions.")
 
         for rule in args["rules"]:
-            print(f"   ↳ {rule.scope}:{rule.pattern}")
+            print(f"   {rule.scope}:{rule.pattern}")
 
         for file in input_files:
-            print(f"📥 Loading report '{file}' ...")
+            print(f"Loading report '{file}' ...")
 
             parser = JacocoParser(file)
             report: JacocoReport = parser.parse()
 
-            print("🧹 Applying filters...")
+            print("Applying filters...")
             engine = FilterEngine(args["rules"])
             engine.apply(report)
-            print(f"   ↳ Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)")
+            print(f"   Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)")
 
-            print("🧮 Updating counters...")
+            print("Updating counters...")
             updater = CounterUpdater()
             updater.apply(report)
 
             filtered_file = file.with_name(file.stem + ".filtered.xml")
 
-            print(f"💾 Saving output to {filtered_file}")
+            print(f"Saving output to {filtered_file}")
             serializer = ReportSerializer(report)
             serializer.write_to_file(filtered_file)
 
-            print("✅ jacoco-filter finished successfully.")
+            print("jacoco-filter finished successfully.")
 
     except Exception as e:
-        print(f"❌ Error: {e}", file=sys.stderr)
+        print(f"Error: {e}", file=sys.stderr)
         traceback.print_exc()
         sys.exit(1)

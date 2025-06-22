@@ -2,7 +2,7 @@ name: CI Integration Test
 
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             BIN="./dist/jacoco-filter/jacoco-filter.exe"
           else
-            BIN="./dist/jacoco-filter"
+            BIN="./dist/jacoco-filter/jacoco-filter"
           fi
 
           echo "Running binary: $BIN"
@@ -47,8 +47,8 @@ jobs:
 
       - name: Rename CLI result for diff
         run: |
-          mv examples/project/module_B/sample.filtered.xml examples/project/module_B/sample.filtered.cli.xml
-          mv examples/project/module_C/sample.filtered.xml examples/project/module_C/sample.filtered.cli.xml
+          mv ./examples/project/module_B/another/sample.filtered.xml ./examples/project/module_B/another/sample.filtered.cli.xml
+          mv ./examples/project/module_C/target/sample.filtered.xml ./examples/project/module_C/target/sample.filtered.cli.xml
         shell: bash
 
       - name: Run binary with config
@@ -57,21 +57,28 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             BIN="./dist/jacoco-filter/jacoco-filter.exe"
           else
-            BIN="./dist/jacoco-filter"
+            BIN="./dist/jacoco-filter/jacoco-filter"
           fi
 
-          echo "🚀 Running binary: $BIN"
+          echo "Running binary: $BIN"
           "$BIN" --config jacoco_filter.toml
 
       - name: Compare filtered outputs
         run: |
-          echo "🔍 Comparing filtered results"
-          diff -u examples/project/module_B/sample.filtered.cli.xml examples/project/module_B/sample.filtered.xml
-          diff -u examples/project/module_C/sample.filtered.cli.xml examples/project/module_C/sample.filtered.xml
+          echo "Comparing filtered results"
+          diff -u ./examples/project/module_B/another/sample.filtered.cli.xml ./examples/project/module_B/another/sample.filtered.xml
+          diff -u ./examples/project/module_C/target/sample.filtered.cli.xml ./examples/project/module_C/target/sample.filtered.xml
         shell: bash
 
-      - name: Compare output with expected file
+      - name: Normalize and compare filtered output
         run: |
-          echo "🔍 Comparing with expected result"
-          diff -u examples/project/module_B/sample.filtered.xml examples/sample.expected.xml
+          unix_expected=$(mktemp)
+          unix_actual=$(mktemp)
+          
+          # Convert both files to Unix line endings
+          tr -d '\r' < examples/sample.expected.xml > "$unix_expected"
+          tr -d '\r' < examples/project/module_B/another/sample.filtered.xml > "$unix_actual"
+
+          echo "🔍 Comparing normalized versions:"
+          diff -u "$unix_expected" "$unix_actual"
         shell: bash
