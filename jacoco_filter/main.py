@@ -7,7 +7,6 @@ import traceback
 from jacoco_filter.cli import parse_arguments, resolve_globs, apply_excludes
 from jacoco_filter.model import JacocoReport
 from jacoco_filter.parser import JacocoParser
-from jacoco_filter.rules import load_filter_rules
 from jacoco_filter.filter_engine import FilterEngine
 from jacoco_filter.counter_updater import CounterUpdater
 from jacoco_filter.serializer import ReportSerializer
@@ -19,20 +18,17 @@ def main():
 
         args = parse_arguments()
         root_dir = Path.cwd()
-        print(f"Args: {args}")
 
         # 1. Resolve all input globs (find files)
-        resolved_files = resolve_globs(args.inputs, root_dir)
+        resolved_files = resolve_globs(args["inputs"], root_dir)
 
         # 2. Apply exclude patterns
-        input_files = apply_excludes(resolved_files, args.exclude_paths, root_dir)
+        input_files = apply_excludes(resolved_files, args["exclude_paths"], root_dir)
 
         if not input_files:
             raise FileNotFoundError("No input files remain after exclusions.")
 
-        print("📜 Loading filter rules...")
-        rules = load_filter_rules(args.rules)
-        for rule in rules:
+        for rule in args["rules"]:
             print(f"   ↳ {rule.scope}:{rule.pattern}")
 
         for file in input_files:
@@ -42,7 +38,7 @@ def main():
             report: JacocoReport = parser.parse()
 
             print("🧹 Applying filters...")
-            engine = FilterEngine(rules)
+            engine = FilterEngine(args["rules"])
             engine.apply(report)
             print(f"   ↳ Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)")
 

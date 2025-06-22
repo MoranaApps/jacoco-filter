@@ -4,6 +4,7 @@ A command-line tool to filter [JaCoCo](https://www.jacoco.org/jacoco/) XML cover
 
 - [Example usage](#-example-usage)
 - [Controlling the Application](#-controlling-the-application)
+- [Configuration File](#configuration-file)
 - [Requirements](#requirements)
 - [Rule Format](#rule-format)
   - [Supported Scopes](#supported-scopes)
@@ -18,18 +19,21 @@ A command-line tool to filter [JaCoCo](https://www.jacoco.org/jacoco/) XML cover
 ## 🧪 Example usage
 
 ```bash
-python3 main.py --input examples/sample.xml --rules examples/rules.txt --output output.xml
+python3 main.py --input examples/sample.xml --rules examples/rules.txt
 ```
 
 ## 🔧 Controlling the Application
 
-`jacoco-filter` provides powerful CLI options to simplify working with large and modular projects. It allows you to specify multiple input globs and define exclusions.
+`jacoco-filter` provides flexible CLI options and config file support to simplify working with large, modular projects. You must provide either `--inputs` via CLI or define them in the config file (`jacoco_filter.toml`).
 
-| Argument           | Type             | Description                                                                        | Example                                                |
-|--------------------|------------------|------------------------------------------------------------------------------------|--------------------------------------------------------|
-| `--inputs`         | list of globs    | Glob patterns or directories to recursively collect input XML files.               | `"target/**/jacoco.xml"`, `"modules/*/coverage-*.xml"` |
-| `--exclude-paths`  | list of globs    | Glob patterns to ignore certain files or folders during discovery. Case-sensitive. | `"**/test/**"`, `"*/legacy/**"`                        |
-| `--rules`          | file path        | Text file with filtering rules for class/method/file exclusions.                   | `"rules/exclude.txt"`                                  |
+| Argument         | Type          | Description                                                                           | Required | Example                                                |
+|------------------|---------------|---------------------------------------------------------------------------------------|:--------:|--------------------------------------------------------|
+| `--inputs`       | list of globs | Glob patterns or directories to recursively collect input XML files.                  |   Yes*   | `"target/**/jacoco.xml"`, `"modules/*/coverage-*.xml"` |
+| `--exclude-paths` | list of globs | Glob patterns to ignore certain files or folders during discovery. Case-sensitive.    |    No    | `"**/test/**"`, `"*/legacy/**"`                        |
+| `--rules`        | file path     | Text file with filtering rules for class/method/file exclusions.                      |   Yes*   | `"rules/exclude.txt"`                                  |
+| `--config`       | toml file     | Optional path to config file (`jacoco_filter.toml` used by default)                   |    No    | `jacoco_filter.toml`                                  |
+
+> * At least one of `--inputs` or `--config` must be provided. Similarly, either `--rules` or inline `rules` in the config must be present.
 
 >- Globs are **explicit**: patterns must include filenames (e.g., `**/jacoco.xml`), not just directory paths.
 >- Pattern matching uses `fnmatchcase()` — case-sensitive and shell-style (`*`, `?`, `[abc]`).
@@ -39,42 +43,63 @@ python3 main.py --input examples/sample.xml --rules examples/rules.txt --output 
 
 ### 📦 Output Handling
 
-Regardless of how many inputs are discovered:
+For every input file discovered:
 
-- The tool writes a **separate filtered XML** file next to each input.
-- The output file uses the same folder, with a new **filename defined by** `--output` (e.g. `jacoco.filtered.xml`).
-
----
+- A `separate filtered XML` is written next to the original file.
+- The output file is named by appending `.filtered.xml` to the input name.
 
 #### Example
 
-If the following input is found:
+If the tool finds:
 
 ```text
 modules/core/target/site/jacoco.xml
 ```
 
-and you run:
+It generates:
 
-```bash
-jacoco-filter \
---inputs "modules/**/jacoco.xml" \
---rules rules.txt \
---output filtered
+```text
+modules/core/target/site/jacoco.filtered.xml
 ```
 
-Then the output will be `modules/core/target/site/jacoco.filtered.xml` for the input file `modules/core/target/site/jacoco.xml`.
+## Configuration File
+
+You can define input globs, exclusion rules, and inline filtering rules inside a `jacoco_filter.toml` config file placed in your project root.
+
+### Example
+
+```toml
+inputs = [
+  "examples/project/**/sample.xml",
+  "example/module*/**/*.xml"
+]
+
+exclude_paths = [
+  "**/module_A/**"
+]
+
+inline_rules = [
+  "file:*Spec.scala",
+  "file:HelperUtil.scala",
+  "class:com.example.MyClass",
+  "method:get*",
+  "method:TestSpec#test*"
+]
+```
+
+> CLI options always override values from the config file.
 
 ## Requirements
 
 - Python 3.12+
-- lxml (for XML parsing)
-- pytest (for testing)
+- `lxml` (for XML parsing)
+- `pytest` (for testing)
 
 ## Rule Format
 
-Each rule defines a class, file, or method to be excluded from coverage. Rules are written in the format:
+Each rule defines a class, file, or method to be excluded from coverage. Rules can be defined in an external file (`--rules`) or inline via the `jacoco_filter.toml` config file.
 
+Format:
 ```text
 <scope>:<pattern>
 ```

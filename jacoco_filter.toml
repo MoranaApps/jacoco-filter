@@ -1,0 +1,29 @@
+inputs = [
+    "examples/project/**/sample.xml",
+    "example/module*/**/*.xml"
+]
+
+exclude_paths = [
+    "**/module_A/**"
+]
+
+# You can omit `rules` if rules is used instead
+# rules = "examples/rules.txt"
+
+rules = [
+    # --- File Rules ---
+    "file:*Spec.scala",
+    "file:HelperUtil.scala",
+    "file:AnotherClass.java",
+
+    # --- Class Rules ---
+    "class:com.example.MyClass",
+    "class:com.extra.example.*",
+    "class:com.example.util.*Helper",
+
+    # --- Method Rules ---
+    "method:get*",
+    "method:AnotherClass#get*",
+    "method:com.example.util.MyHelper#getInternalState",
+    "method:TestSpec#test*"
+]
