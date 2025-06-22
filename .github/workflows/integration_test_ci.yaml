@@ -1,0 +1,77 @@
+name: CI Integration Test
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ci-integration-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build standalone binary
+        run: |
+          pyinstaller --clean jacoco_filter.spec
+          echo "dist/ contents:"
+          find dist -type f
+        shell: bash
+
+      - name: Run binary with CLI args
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            BIN="./dist/jacoco-filter/jacoco-filter.exe"
+          else
+            BIN="./dist/jacoco-filter"
+          fi
+
+          echo "Running binary: $BIN"
+          "$BIN" --inputs "examples/project/**/sample.xml" "example/module*/**/*.xml" --exclude-paths "**/module_A/**" --rules examples/rules.txt
+
+      - name: Rename CLI result for diff
+        run: |
+          mv examples/project/module_B/sample.filtered.xml examples/project/module_B/sample.filtered.cli.xml
+          mv examples/project/module_C/sample.filtered.xml examples/project/module_C/sample.filtered.cli.xml
+        shell: bash
+
+      - name: Run binary with config
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            BIN="./dist/jacoco-filter/jacoco-filter.exe"
+          else
+            BIN="./dist/jacoco-filter"
+          fi
+
+          echo "🚀 Running binary: $BIN"
+          "$BIN" --config jacoco_filter.toml
+
+      - name: Compare filtered outputs
+        run: |
+          echo "🔍 Comparing filtered results"
+          diff -u examples/project/module_B/sample.filtered.cli.xml examples/project/module_B/sample.filtered.xml
+          diff -u examples/project/module_C/sample.filtered.cli.xml examples/project/module_C/sample.filtered.xml
+        shell: bash
+
+      - name: Compare output with expected file
+        run: |
+          echo "🔍 Comparing with expected result"
+          diff -u examples/project/module_B/sample.filtered.xml examples/sample.expected.xml
+        shell: bash
