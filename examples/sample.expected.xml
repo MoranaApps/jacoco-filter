@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<report name="Test Report">
+
+    <package name="pkg/file_rule">
+        </package>
+
+    <package name="pkg/class_rule">
+        </package>
+
+    <package name="pkg/method_rule">
+        <class name="pkg/method_rule/GlobalGetter" sourcefilename="Generic.java">
+            <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="0"/><counter type="METHOD" missed="0" covered="0"/></class>
+    <counter type="INSTRUCTION" missed="0" covered="0"/></package>
+
+    <counter type="LINE" missed="0" covered="50"/><counter type="METHOD" missed="0" covered="10"/><counter type="INSTRUCTION" missed="0" covered="0"/></report>
