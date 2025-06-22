@@ -31,7 +31,7 @@ jobs:
       - name: List dist contents
         run: |
           echo "📂 Contents of dist/"
-          ls -lh D:\a\jacoco-filter\jacoco-filter\dist
+          ls -lh dist/
         shell: bash
 
       - name: Rename artifact
