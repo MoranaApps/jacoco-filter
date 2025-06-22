@@ -57,7 +57,7 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             BIN="./dist/jacoco-filter/jacoco-filter.exe"
           else
-            BIN="./dist/jacoco-filter"
+            BIN="./dist/jacoco-filter/jacoco-filter"
           fi
 
           echo "🚀 Running binary: $BIN"
