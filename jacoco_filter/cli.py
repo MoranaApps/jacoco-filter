@@ -86,7 +86,7 @@ def parse_arguments() -> dict:
 
     elif "rules" in config:
         # when rules are defined in the config
-        print("   ↳ Loaded inline_rules from config")
+        print("   Loaded inline_rules from config")
         for raw_line in config.get("rules", []):
             stripped = raw_line.strip()
             if stripped.startswith("#"):
