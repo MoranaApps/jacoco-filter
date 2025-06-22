@@ -47,8 +47,8 @@ jobs:
 
       - name: Rename CLI result for diff
         run: |
-          mv examples/project/module_B/sample.filtered.xml examples/project/module_B/sample.filtered.cli.xml
-          mv examples/project/module_C/sample.filtered.xml examples/project/module_C/sample.filtered.cli.xml
+          mv ./examples/project/module_B/sample.filtered.xml ./examples/project/module_B/sample.filtered.cli.xml
+          mv ./examples/project/module_C/sample.filtered.xml ./examples/project/module_C/sample.filtered.cli.xml
         shell: bash
 
       - name: Run binary with config
@@ -66,8 +66,8 @@ jobs:
       - name: Compare filtered outputs
         run: |
           echo "🔍 Comparing filtered results"
-          diff -u examples/project/module_B/sample.filtered.cli.xml examples/project/module_B/sample.filtered.xml
-          diff -u examples/project/module_C/sample.filtered.cli.xml examples/project/module_C/sample.filtered.xml
+          diff -u ./examples/project/module_B/sample.filtered.cli.xml ./examples/project/module_B/sample.filtered.xml
+          diff -u ./examples/project/module_C/sample.filtered.cli.xml ./examples/project/module_C/sample.filtered.xml
         shell: bash
 
       - name: Compare output with expected file
