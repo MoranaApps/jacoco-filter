@@ -24,25 +24,26 @@ def parse_arguments() -> dict:
         description="jacoco-filter: Filter JaCoCo XML reports and adjust coverage counters."
     )
     parser.add_argument(
-        "--config", "-c",
+        "--config",
+        "-c",
         type=Path,
-        help="Optional path to .toml config file (default: jacoco_filter.toml)"
+        help="Optional path to .toml config file (default: jacoco_filter.toml)",
     )
     parser.add_argument(
-        "--inputs", "-i",
+        "--inputs",
+        "-i",
         nargs="*",
-        help='One or more glob patterns or directories to recursively collect input XML files (e.g. "target/**/jacoco.xml")'
+        help='One or more glob patterns or directories to recursively collect input XML files (e.g. "target/**/jacoco.xml")',
     )
     parser.add_argument(
-        "--exclude-paths", "-x",
+        "--exclude-paths",
+        "-x",
         nargs="*",
         default=[],
-        help='Optional glob patterns to exclude paths from processing (e.g. "**/test/**")'
+        help='Optional glob patterns to exclude paths from processing (e.g. "**/test/**")',
     )
     parser.add_argument(
-        "--rules", "-r",
-        type=Path,
-        help="Path to the filter rules file"
+        "--rules", "-r", type=Path, help="Path to the filter rules file"
     )
 
     args = parser.parse_args()
@@ -126,7 +127,9 @@ def resolve_globs(patterns: Iterable[str], root_path: Path) -> list[Path]:
     return sorted(p.resolve() for p in files if p.is_file())
 
 
-def apply_excludes(paths: list[Path], exclude_patterns: list[str], root_path: Path) -> list[Path]:
+def apply_excludes(
+    paths: list[Path], exclude_patterns: list[str], root_path: Path
+) -> list[Path]:
     result = []
     for path in paths:
         try:

@@ -16,6 +16,7 @@ class ScopeEnum(str, Enum):
     def has_value(cls, value: str) -> bool:
         return value in cls._value2member_map_
 
+
 @dataclass
 class FilterRule:
     scope: ScopeEnum  # "file", "class", or "method"
@@ -26,7 +27,9 @@ class FilterRule:
     def __post_init__(self):
         if self.scope == ScopeEnum.METHOD:
             if "#" in self.pattern:
-                self.target_class_pattern, self.target_method_pattern = self.pattern.split("#", 1)
+                self.target_class_pattern, self.target_method_pattern = (
+                    self.pattern.split("#", 1)
+                )
             else:
                 self.target_class_pattern = None
                 self.target_method_pattern = self.pattern
@@ -38,40 +41,58 @@ class FilterRule:
                     return fnmatchcase(target["sourcefilename"], self.pattern)
 
                 case ScopeEnum.CLASS:
-                    return fnmatchcase(target["fully_qualified_classname"], self.pattern)
+                    return fnmatchcase(
+                        target["fully_qualified_classname"], self.pattern
+                    )
 
                 case ScopeEnum.METHOD:
                     method_name = target["method_name"]
                     fqcn = target.get("fully_qualified_classname", "")
-                    simple_class = target.get("simple_class_name", fqcn.split(".")[-1] if fqcn else "")
+                    simple_class = target.get(
+                        "simple_class_name", fqcn.split(".")[-1] if fqcn else ""
+                    )
 
-                    print(f"[DEBUG] METHOD: fqcn={fqcn}, simple_class={simple_class}, method={method_name}")
-                    print(f"[DEBUG] Rule: class_pattern={self.target_class_pattern}, method_pattern={self.target_method_pattern}")
+                    print(
+                        f"[DEBUG] METHOD: fqcn={fqcn}, simple_class={simple_class}, method={method_name}"
+                    )
+                    print(
+                        f"[DEBUG] Rule: class_pattern={self.target_class_pattern}, method_pattern={self.target_method_pattern}"
+                    )
 
                     if self.target_class_pattern:
-                        class_match = (
-                            fnmatchcase(fqcn, self.target_class_pattern)
-                            or fnmatchcase(simple_class, self.target_class_pattern)
-                        )
+                        class_match = fnmatchcase(
+                            fqcn, self.target_class_pattern
+                        ) or fnmatchcase(simple_class, self.target_class_pattern)
 
                         if not class_match:
-                            print(f"[DEBUG] Rule '{self.pattern}' did not match class '{fqcn}' or '{simple_class}'")
+                            print(
+                                f"[DEBUG] Rule '{self.pattern}' did not match class '{fqcn}' or '{simple_class}'"
+                            )
                             return False
 
                     matched = fnmatchcase(method_name, self.target_method_pattern)
-                    print(f"[DEBUG] Matching method '{method_name}' with rule '{self.pattern}' => {matched}")
+                    print(
+                        f"[DEBUG] Matching method '{method_name}' with rule '{self.pattern}' => {matched}"
+                    )
                     return matched
 
                 case _:
                     return False
 
         except KeyError as e:
-            raise KeyError(f"Missing key '{e.args[0]}' in target dict for rule: {self.scope}:{self.pattern}")
+            raise KeyError(
+                f"Missing key '{e.args[0]}' in target dict for rule: {self.scope}:{self.pattern}"
+            )
 
     @staticmethod
     def is_valid_line(line: str) -> bool:
         line = line.strip()
-        return bool(line) and not line.startswith("#") and ":" in line and any(scope in line for scope in ScopeEnum)
+        return (
+            bool(line)
+            and not line.startswith("#")
+            and ":" in line
+            and any(scope in line for scope in ScopeEnum)
+        )
 
     @classmethod
     def parse(cls, line: str) -> "FilterRule":
@@ -120,6 +141,7 @@ def load_filter_rules(path: Path) -> list[FilterRule]:
             rules.append(FilterRule(scope=ScopeEnum(scope), pattern=pattern))
 
     return rules
+
 
 def strip_comment(line: str) -> str:
     """

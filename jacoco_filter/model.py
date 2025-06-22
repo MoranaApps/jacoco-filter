@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
+
 @dataclass
 class Counter:
     type: str
@@ -19,6 +20,7 @@ class Counter:
             xml_element=elem,
         )
 
+
 @dataclass
 class Method:
     name: str
@@ -27,6 +29,7 @@ class Method:
     counters: list[Counter] = field(default_factory=list)
     xml_element: Any = None
 
+
 @dataclass
 class Class:
     name: str
@@ -34,12 +37,14 @@ class Class:
     counters: list[Counter] = field(default_factory=list)
     xml_element: Any = None
 
+
 @dataclass
 class Package:
     name: str
     classes: list[Class] = field(default_factory=list)
     counters: list[Counter] = field(default_factory=list)
     xml_element: Any = None
+
 
 @dataclass
 class JacocoReport:

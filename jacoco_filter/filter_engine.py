@@ -8,10 +8,7 @@ from jacoco_filter.rules import FilterRule, ScopeEnum
 class FilterEngine:
     def __init__(self, rules: list[FilterRule]):
         self.rules = rules
-        self.stats = {
-            "methods_removed": 0,
-            "classes_removed": 0
-        }
+        self.stats = {"methods_removed": 0, "classes_removed": 0}
 
     def apply(self, report: JacocoReport):
         for package in report.packages:
@@ -20,16 +17,22 @@ class FilterEngine:
             for cls in package.classes:
                 fqcn = cls.name.replace("/", ".")
                 simple_class_name = fqcn.split(".")[-1]
-                sourcefilename = getattr(cls, "sourcefilename", cls.xml_element.get("sourcefilename", ""))
+                sourcefilename = getattr(
+                    cls, "sourcefilename", cls.xml_element.get("sourcefilename", "")
+                )
 
                 class_attrs = {
                     "fully_qualified_classname": fqcn,
-                    "sourcefilename": sourcefilename
+                    "sourcefilename": sourcefilename,
                 }
 
                 # Check if class should be removed by class or file rule
-                if self._matches(class_attrs, "class") or self._matches(class_attrs, "file"):
-                    print(f"[DEBUG] Removing class due to rule: {fqcn} ({sourcefilename})")
+                if self._matches(class_attrs, "class") or self._matches(
+                    class_attrs, "file"
+                ):
+                    print(
+                        f"[DEBUG] Removing class due to rule: {fqcn} ({sourcefilename})"
+                    )
                     self.stats["classes_removed"] += 1
                     parent_elem = cls.xml_element.getparent()
                     if parent_elem is not None:
@@ -46,9 +49,14 @@ class FilterEngine:
                     }
 
                     if self._matches(method_attrs, "method"):
-                        print(f"[DEBUG] Removing method due to rule: {fqcn}#{method.name}")
+                        print(
+                            f"[DEBUG] Removing method due to rule: {fqcn}#{method.name}"
+                        )
                         self.stats["methods_removed"] += 1
-                        if cls.xml_element is not None and method.xml_element is not None:
+                        if (
+                            cls.xml_element is not None
+                            and method.xml_element is not None
+                        ):
                             cls.xml_element.remove(method.xml_element)
                         continue
 
@@ -59,10 +67,11 @@ class FilterEngine:
 
             package.classes = remaining_classes
 
-
     def _matches(self, target: dict, scope: str) -> bool:
         for rule in self.rules:
             if rule.scope == scope and rule.matches(target):
-                print(f"[DEBUG] Matching rule '{rule.pattern}' on scope '{scope}' => matched")
+                print(
+                    f"[DEBUG] Matching rule '{rule.pattern}' on scope '{scope}' => matched"
+                )
                 return True
         return False

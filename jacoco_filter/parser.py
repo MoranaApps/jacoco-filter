@@ -31,7 +31,7 @@ class JacocoParser:
                         xml_element=meth_elem,
                         name=meth_elem.get("name"),
                         desc=meth_elem.get("desc"),
-                        line=meth_elem.get("line")
+                        line=meth_elem.get("line"),
                     )
                     cls.methods.append(meth)
 

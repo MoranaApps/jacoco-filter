@@ -40,7 +40,9 @@ def main():
             print("Applying filters...")
             engine = FilterEngine(args["rules"])
             engine.apply(report)
-            print(f"   Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)")
+            print(
+                f"   Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)"
+            )
 
             print("Updating counters...")
             updater = CounterUpdater()

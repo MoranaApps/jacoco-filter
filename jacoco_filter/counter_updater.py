@@ -45,6 +45,7 @@ class CounterUpdater:
         # Create new Counter and XML element
         if children and hasattr(children[0], "xml_element"):
             import lxml.etree as ET
+
             parent_elem = children[0].xml_element.getparent()
 
             if parent_elem is not None:
@@ -54,11 +55,21 @@ class CounterUpdater:
                         parent_elem.remove(old_counter)
 
                 # Create and insert the new one
-                new_elem = ET.Element("counter", type="INSTRUCTION",
-                                      missed=str(total_missed),
-                                      covered=str(total_covered))
+                new_elem = ET.Element(
+                    "counter",
+                    type="INSTRUCTION",
+                    missed=str(total_missed),
+                    covered=str(total_covered),
+                )
                 parent_elem.append(new_elem)
         else:
             new_elem = None
 
-        return [Counter(type="INSTRUCTION", missed=total_missed, covered=total_covered, xml_element=new_elem)]
+        return [
+            Counter(
+                type="INSTRUCTION",
+                missed=total_missed,
+                covered=total_covered,
+                xml_element=new_elem,
+            )
+        ]
