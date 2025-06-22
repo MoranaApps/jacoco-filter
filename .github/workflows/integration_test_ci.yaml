@@ -70,8 +70,15 @@ jobs:
           diff -u ./examples/project/module_C/target/sample.filtered.cli.xml ./examples/project/module_C/target/sample.filtered.xml
         shell: bash
 
-      - name: Compare output with expected file
+      - name: Normalize and compare filtered output
         run: |
-          echo "Comparing with expected result"
-          diff -u examples/project/module_B/another/sample.filtered.xml examples/sample.expected.xml
+          unix_expected=$(mktemp)
+          unix_actual=$(mktemp)
+          
+          # Convert both files to Unix line endings
+          tr -d '\r' < examples/sample.expected.xml > "$unix_expected"
+          tr -d '\r' < examples/project/module_B/another/sample.filtered.xml > "$unix_actual"
+
+          echo "🔍 Comparing normalized versions:"
+          diff -u "$unix_expected" "$unix_actual"
         shell: bash
