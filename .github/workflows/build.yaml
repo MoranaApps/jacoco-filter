@@ -30,8 +30,9 @@ jobs:
 
       - name: List dist contents
         run: |
-          echo "📂 Contents of dist/"
-          ls -lh dist/
+          echo "Working dir is: $(pwd)"
+          echo "Listing contents recursively:"
+          find . -type f
         shell: bash
 
       - name: Rename artifact
