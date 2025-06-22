@@ -11,7 +11,7 @@ class JacocoParser:
         self.input_path = input_path
 
     def parse(self) -> JacocoReport:
-        print(f"📄 Parsing {self.input_path}")
+        print(f"Parsing {self.input_path}")
 
         tree = etree.parse(str(self.input_path))
         root = tree.getroot()

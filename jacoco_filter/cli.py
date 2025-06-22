@@ -105,7 +105,7 @@ def parse_arguments() -> dict:
         print("No rules provided. Use --rules or define rules in the config.")
 
     # -----------
-    print("🔧 Final configuration:")
+    print("Final configuration:")
     print(f"   inputs: {merged['inputs']}")
     print(f"   exclude_paths: {merged['exclude_paths']}")
     print(f"   rules: {merged['rules']}")
