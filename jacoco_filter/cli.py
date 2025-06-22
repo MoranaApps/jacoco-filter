@@ -81,7 +81,7 @@ def parse_arguments() -> dict:
 
     if args.rules:
         # when rules are provided via CLI
-        print(f"   ↳ Loaded from file: {args.rules}")
+        print(f"   Loaded from file: {args.rules}")
         merged["rules"] = load_filter_rules(args.rules)
 
     elif "rules" in config:
