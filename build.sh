@@ -1,15 +1,9 @@
-#!/bin/bash
-# build.sh
-
+#!/usr/bin/env bash
 set -e
 
-# Ensure we're in the project root
-cd "$(dirname "$0")"
+PLATFORM="${1:-$(uname -s | tr '[:upper:]' '[:lower:]')}"
+echo "🛠 Building for: $PLATFORM"
 
-echo "🔧 Activating virtual environment..."
-source .venv/bin/activate
+pyinstaller --clean jacoco_filter.spec
 
-echo "🔨 Building jacoco-filter using PyInstaller..."
-pyinstaller jacoco_filter.spec
-
-echo "✅ Done. Binary located at: dist/jacoco-filter"
+echo "✅ Output placed in ./dist/jacoco-filter/"
