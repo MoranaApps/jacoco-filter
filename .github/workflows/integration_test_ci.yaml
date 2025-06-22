@@ -73,5 +73,5 @@ jobs:
       - name: Compare output with expected file
         run: |
           echo "🔍 Comparing with expected result"
-          diff -u examples/project/module_B/sample.filtered.xml examples/sample.expected.xml
+          diff -u examples/project/module_B/another/sample.filtered.xml examples/sample.expected.xml
         shell: bash
