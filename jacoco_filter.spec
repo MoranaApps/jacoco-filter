@@ -1,5 +1,4 @@
 from pathlib import Path
-import os
 import sys
 import lxml
 
@@ -9,17 +8,20 @@ block_cipher = None
 platform = sys.platform
 output_name = "jacoco-filter"
 
-if platform.startswith("win"):
-    lxml_files = ["etree.pyd", "objectify.pyd"]
-elif platform.startswith("darwin"):
-    lxml_files = ["etree.cpython-312-darwin.so", "objectify.cpython-312-darwin.so"]
-else:
-    # Linux
-    lxml_files = ["etree.cpython-312-x86_64-linux-gnu.so", "objectify.cpython-312-x86_64-linux-gnu.so"]
-
 # Locate lxml module path dynamically
 lxml_path = Path(lxml.__file__).parent
-lxml_binaries = [(str(lxml_path / f), "lxml") for f in lxml_files]
+lxml_binaries = []
+
+# Search dynamically for etree and objectify binaries
+for name in ["etree", "objectify"]:
+    matches = list(lxml_path.glob(f"{name}.*"))
+    if not matches:
+        print(f"Warning: no match found for '{name}.*' in {lxml_path}")
+    for match in matches:
+        lxml_binaries.append((str(match), "lxml"))
+
+if not lxml_binaries:
+    raise RuntimeError("❌ No lxml binary extensions found — cannot package.")
 
 a = Analysis(
     ['run_filter.py'],
