@@ -28,17 +28,10 @@ jobs:
         run: |
           pyinstaller --clean jacoco_filter.spec
 
-      - name: List dist contents
-        run: |
-          echo "Working dir is: $(pwd)"
-          echo "Listing contents recursively:"
-          find . -type f
-        shell: bash
-
       - name: Rename artifact
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
-            mv dist/jacoco-filter.exe dist/jacoco-filter-win.exe
+            mv dist/jacoco-filter/jacoco-filter.exe dist/jacoco-filter-win.exe
           elif [ "$RUNNER_OS" = "macOS" ]; then
             mv dist/jacoco-filter dist/jacoco-filter-macos
           else
