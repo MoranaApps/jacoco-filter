@@ -68,6 +68,29 @@ class FilterRule:
         except KeyError as e:
             raise KeyError(f"Missing key '{e.args[0]}' in target dict for rule: {self.scope}:{self.pattern}")
 
+    @staticmethod
+    def is_valid_line(line: str) -> bool:
+        line = line.strip()
+        return bool(line) and not line.startswith("#") and ":" in line and any(scope in line for scope in ScopeEnum)
+
+    @classmethod
+    def parse(cls, line: str) -> "FilterRule":
+        if ":" not in line:
+            raise ValueError(f"Missing ':' in rule: '{line}'")
+
+        scope, pattern = line.split(":", 1)
+        scope = scope.strip()
+        pattern = pattern.strip()
+
+        if scope not in ScopeEnum:
+            raise ValueError(f"Invalid scope '{scope}' in rule: '{line}'")
+
+        if not pattern:
+            raise ValueError(f"Empty pattern in rule: '{line}'")
+
+        return cls(scope, pattern)
+
+
 def load_filter_rules(path: Path) -> list[FilterRule]:
     rules = []
 
