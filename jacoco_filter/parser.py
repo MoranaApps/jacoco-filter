@@ -1,8 +1,10 @@
-# jacoco_filter/parser.py
+"""
+Parser for JaCoCo XML reports.
+"""
 import logging
 
-from lxml import etree
 from pathlib import Path
+from lxml import etree
 from jacoco_filter.model import JacocoReport, Package, Class, Method, Counter
 
 
@@ -10,12 +12,21 @@ logger = logging.getLogger(__name__)
 
 
 class JacocoParser:
+    """
+    A parser for JaCoCo XML reports.
+    """
 
     def __init__(self, input_path: Path):
         self.input_path = input_path
 
     def parse(self) -> JacocoReport:
-        logger.info(f"Parsing {self.input_path}")
+        """
+        Parses the JaCoCo XML report from the given input path.
+
+        Returns:
+            JacocoReport: The parsed JaCoCo report containing packages, classes, methods, and counters.
+        """
+        logger.info("Parsing %s", self.input_path)
 
         tree = etree.parse(str(self.input_path))
         root = tree.getroot()

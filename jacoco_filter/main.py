@@ -1,4 +1,7 @@
-# jacoco_filter/main.py
+"""
+This module is the entry point for the jacoco-filter CLI application.
+"""
+
 import logging
 from pathlib import Path
 import sys
@@ -16,6 +19,12 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    """
+    Main entry point for the jacoco-filter application.
+
+    Returns:
+        None
+    """
     try:
 
         args = parse_arguments()
@@ -35,14 +44,14 @@ def main():
 
         logger.info("Loaded rules:")
         for rule in args["rules"]:
-            logger.info(f"   {rule.scope.value}:{rule.pattern}")
+            logger.info("   %s:%s", rule.scope.value, rule.pattern)
 
-        logger.info(f"Found {len(input_files)} input file(s) to process.")
+        logger.info("Found %s input file(s) to process.", len(input_files))
         for file in input_files:
-            logger.info(f" - {file}")
+            logger.info(" - %s", file)
 
         for file in input_files:
-            logger.info(f"Loading report '{file}' ...")
+            logger.info("Loading report '%s' ...", file)
 
             parser = JacocoParser(file)
             report: JacocoReport = parser.parse()
@@ -51,7 +60,7 @@ def main():
             engine = FilterEngine(args["rules"])
             engine.apply(report)
             logger.info(
-                f"Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)"
+                "Removed %s class(es), %s method(s)", engine.stats['classes_removed'], engine.stats['methods_removed']
             )
 
             logger.info("Updating counters...")
@@ -60,13 +69,14 @@ def main():
 
             filtered_file = file.with_name(file.stem + ".filtered.xml")
 
-            logger.info(f"Saving output to {filtered_file}")
+            logger.info("Saving output to %s", filtered_file)
             serializer = ReportSerializer(report)
             serializer.write_to_file(filtered_file)
 
             logger.info("jacoco-filter finished successfully.")
 
+    # pylint: disable=broad-except
     except Exception as e:
-        logger.error(f"Error: {e}")
+        logger.error("Error: %s", e)
         traceback.print_exc()
         sys.exit(1)

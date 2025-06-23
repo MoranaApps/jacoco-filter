@@ -1,3 +1,7 @@
+"""
+Logging configuration for the project.
+"""
+
 import logging
 import os
 import sys

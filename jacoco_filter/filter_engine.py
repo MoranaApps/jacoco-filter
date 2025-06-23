@@ -1,19 +1,33 @@
-# jacoco_filter/filter_engine.py
+"""
+This module implements the FilterEngine class, which applies filtering rules
+"""
+
 import logging
 
-from jacoco_filter.model import JacocoReport, Package, Class, Method
-from jacoco_filter.rules import FilterRule, ScopeEnum
+from jacoco_filter.model import JacocoReport
+from jacoco_filter.rules import FilterRule
 
 
 logger = logging.getLogger(__name__)
 
 
 class FilterEngine:
+    """
+    FilterEngine applies filtering rules to a JaCoCo report.
+    """
     def __init__(self, rules: list[FilterRule]):
         self.rules = rules
         self.stats = {"methods_removed": 0, "classes_removed": 0}
 
     def apply(self, report: JacocoReport):
+        """
+        Apply filtering rules to the JaCoCo report.
+
+        Parameters:
+            rules (list[FilterRule]): List of filtering rules to apply.
+        Returns:
+            None
+        """
         for package in report.packages:
             remaining_classes = []
 
@@ -34,7 +48,7 @@ class FilterEngine:
                     class_attrs, "file"
                 ):
                     logger.debug(
-                        f"Removing class due to rule: {fqcn} ({sourcefilename})"
+                        "Removing class due to rule: %s (%s)", fqcn, sourcefilename
                     )
                     self.stats["classes_removed"] += 1
                     parent_elem = cls.xml_element.getparent()
@@ -53,7 +67,7 @@ class FilterEngine:
 
                     if self._matches(method_attrs, "method"):
                         logger.debug(
-                            f"Removing method due to rule: {fqcn}#{method.name}"
+                            "Removing method due to rule: %s#%s", fqcn, method.name
                         )
                         self.stats["methods_removed"] += 1
                         if (
@@ -71,10 +85,19 @@ class FilterEngine:
             package.classes = remaining_classes
 
     def _matches(self, target: dict, scope: str) -> bool:
+        """
+        Check if the target matches any of the filtering rules for the given scope.
+
+        Parameters:
+            target (dict): Attributes of the target to match against rules.
+            scope (str): The scope to check against the rules (e.g., "class", "method", "file").
+        Returns:
+            bool: True if any rule matches, False otherwise.
+        """
         for rule in self.rules:
             if rule.scope == scope and rule.matches(target):
                 logger.debug(
-                    f"Matching rule '{rule.pattern}' on scope '{scope}' => matched"
+                    "Matching rule '%s' on scope '%s' => matched", rule.pattern, scope
                 )
                 return True
         return False
