@@ -1,8 +1,11 @@
 # jacoco_filter/filter_engine.py
+import logging
 
-from fnmatch import fnmatchcase
 from jacoco_filter.model import JacocoReport, Package, Class, Method
 from jacoco_filter.rules import FilterRule, ScopeEnum
+
+
+logger = logging.getLogger(__name__)
 
 
 class FilterEngine:
@@ -30,9 +33,7 @@ class FilterEngine:
                 if self._matches(class_attrs, "class") or self._matches(
                     class_attrs, "file"
                 ):
-                    print(
-                        f"[DEBUG] Removing class due to rule: {fqcn} ({sourcefilename})"
-                    )
+                    logger.debug(f"Removing class due to rule: {fqcn} ({sourcefilename})")
                     self.stats["classes_removed"] += 1
                     parent_elem = cls.xml_element.getparent()
                     if parent_elem is not None:
@@ -49,9 +50,7 @@ class FilterEngine:
                     }
 
                     if self._matches(method_attrs, "method"):
-                        print(
-                            f"[DEBUG] Removing method due to rule: {fqcn}#{method.name}"
-                        )
+                        logger.debug(f"Removing method due to rule: {fqcn}#{method.name}")
                         self.stats["methods_removed"] += 1
                         if (
                             cls.xml_element is not None
@@ -70,8 +69,6 @@ class FilterEngine:
     def _matches(self, target: dict, scope: str) -> bool:
         for rule in self.rules:
             if rule.scope == scope and rule.matches(target):
-                print(
-                    f"[DEBUG] Matching rule '{rule.pattern}' on scope '{scope}' => matched"
-                )
+                logger.debug(f"Matching rule '{rule.pattern}' on scope '{scope}' => matched")
                 return True
         return False

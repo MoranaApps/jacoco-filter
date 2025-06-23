@@ -1,8 +1,12 @@
 # jacoco_filter/parser.py
+import logging
 
 from lxml import etree
 from pathlib import Path
 from jacoco_filter.model import JacocoReport, Package, Class, Method, Counter
+
+
+logger = logging.getLogger(__name__)
 
 
 class JacocoParser:
@@ -11,7 +15,7 @@ class JacocoParser:
         self.input_path = input_path
 
     def parse(self) -> JacocoReport:
-        print(f"Parsing {self.input_path}")
+        logger.info(f"Parsing {self.input_path}")
 
         tree = etree.parse(str(self.input_path))
         root = tree.getroot()

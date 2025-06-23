@@ -1,10 +1,14 @@
 # jacoco_filter/rules.py
+import logging
 import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from fnmatch import fnmatchcase
 from typing import Optional
+
+
+logger = logging.getLogger(__name__)
 
 
 class ScopeEnum(str, Enum):
@@ -52,12 +56,8 @@ class FilterRule:
                         "simple_class_name", fqcn.split(".")[-1] if fqcn else ""
                     )
 
-                    print(
-                        f"[DEBUG] METHOD: fqcn={fqcn}, simple_class={simple_class}, method={method_name}"
-                    )
-                    print(
-                        f"[DEBUG] Rule: class_pattern={self.target_class_pattern}, method_pattern={self.target_method_pattern}"
-                    )
+                    logger.debug(f"METHOD: fqcn={fqcn}, simple_class={simple_class}, method={method_name}")
+                    logger.debug(f"Rule: class_pattern={self.target_class_pattern}, method_pattern={self.target_method_pattern}")
 
                     if self.target_class_pattern:
                         class_match = fnmatchcase(
@@ -65,15 +65,11 @@ class FilterRule:
                         ) or fnmatchcase(simple_class, self.target_class_pattern)
 
                         if not class_match:
-                            print(
-                                f"[DEBUG] Rule '{self.pattern}' did not match class '{fqcn}' or '{simple_class}'"
-                            )
+                            logger.debug(f"Rule '{self.pattern}' did not match class '{fqcn}' or '{simple_class}'")
                             return False
 
                     matched = fnmatchcase(method_name, self.target_method_pattern)
-                    print(
-                        f"[DEBUG] Matching method '{method_name}' with rule '{self.pattern}' => {matched}"
-                    )
+                    logger.debug(f"Matching method '{method_name}' with rule '{self.pattern}' => {matched}")
                     return matched
 
                 case _:
