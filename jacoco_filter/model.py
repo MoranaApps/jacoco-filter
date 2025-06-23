@@ -11,6 +11,7 @@ class Counter:
     """
     Represents a coverage counter in a JaCoCo report.
     """
+
     type: str
     missed: int
     covered: int
@@ -31,6 +32,7 @@ class Method:
     """
     Represents a method in a JaCoCo report.
     """
+
     name: str
     desc: str
     line: Optional[str]
@@ -43,6 +45,7 @@ class Class:
     """
     Represents a class in a JaCoCo report.
     """
+
     name: str
     methods: list[Method] = field(default_factory=list)
     counters: list[Counter] = field(default_factory=list)
@@ -54,6 +57,7 @@ class Package:
     """
     Represents a package in a JaCoCo report.
     """
+
     name: str
     classes: list[Class] = field(default_factory=list)
     counters: list[Counter] = field(default_factory=list)

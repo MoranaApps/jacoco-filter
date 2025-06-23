@@ -1,28 +1,47 @@
+"""
+This module provides the command-line interface for jacoco-filter.
+"""
+
 import argparse
 import fnmatch
 import logging
 import sys
 
-import tomli
-
 from pathlib import Path
 from typing import Iterable
+
+import tomli
+
 from jacoco_filter.rules import FilterRule, load_filter_rules
 
 logger = logging.getLogger(__name__)
 
 
 def load_config(config_path: Path) -> dict:
+    """
+    Loads the configuration from a .toml file.
+
+    Parameters:
+        config_path (Path): The path to the configuration file.
+    Returns:
+        dict: The loaded configuration as a dictionary.
+    """
     if not config_path.exists():
-        logger.error(f"Configuration file not found: {config_path}.")
+        logger.error("Configuration file not found: %s.", config_path)
         return {}
 
     with config_path.open("rb") as f:
-        logger.info(f"Loading configuration from {config_path}...")
+        logger.info("Loading configuration from %s...", config_path)
         return tomli.load(f)
 
 
 def parse_arguments() -> dict:
+    """
+    Parses command-line arguments and merges them with the configuration file if provided.
+
+    Returns:
+        dict: A dictionary containing the merged configuration.
+    """
     parser = argparse.ArgumentParser(
         description="jacoco-filter: Filter JaCoCo XML reports and adjust coverage counters."
     )
@@ -36,7 +55,8 @@ def parse_arguments() -> dict:
         "--inputs",
         "-i",
         nargs="*",
-        help='One or more glob patterns or directories to recursively collect input XML files (e.g. "target/**/jacoco.xml")',
+        help='One or more glob patterns or directories to recursively collect input XML files '
+             '(e.g. "target/**/jacoco.xml")',
     )
     parser.add_argument(
         "--exclude-paths",
@@ -94,7 +114,7 @@ def parse_arguments() -> dict:
 
     if args.rules:
         # when rules are provided via CLI
-        logger.info(f"   Loaded from file: {args.rules}")
+        logger.info("   Loaded from file: %s", args.rules)
         merged["rules"] = load_filter_rules(args.rules)
 
     elif "rules" in config:
@@ -107,12 +127,13 @@ def parse_arguments() -> dict:
 
             if not FilterRule.is_valid_line(stripped):
                 if stripped:
-                    logger.warning(f"Skipping invalid rule rule: '{stripped}'")
+                    logger.warning("Skipping invalid rule rule: '%s'", stripped)
                 continue
             try:
                 merged["rules"].append(FilterRule.parse(stripped))
+            # pylint: disable=broad-except
             except Exception as e:
-                logger.error(f"Failed to parse rule rule '{stripped}': {e}")
+                logger.error("Failed to parse rule rule '%s': %s", stripped, e)
 
     if len(merged["rules"]) == 0:
         logger.error("No rules provided. Use --rules or define rules in the config.")
@@ -124,18 +145,23 @@ def parse_arguments() -> dict:
 
     # -----------
     logger.info("Final configuration:")
-    logger.info(f"   inputs: {merged['inputs']}")
-    logger.info(f"   exclude_paths: {merged['exclude_paths']}")
-    logger.info(f"   rules: {merged['rules']}")
-    logger.info(f"   verbose logging: {merged['verbose']}")
+    logger.info("   inputs: %s", merged['inputs'])
+    logger.info("   exclude_paths: %s", merged['exclude_paths'])
+    logger.info("   rules: %s", merged['rules'])
+    logger.info("   verbose logging: %s", merged['verbose'])
 
     return merged
 
 
 def resolve_globs(patterns: Iterable[str], root_path: Path) -> list[Path]:
     """
-    Resolves glob patterns relative to the given root path.
-    Returns a list of absolute Paths that are files.
+    Resolves a list of glob patterns against a root path and returns a sorted list of file paths.
+
+    Parameters:
+        patterns (Iterable[str]): A list of glob patterns to match files.
+        root_path (Path): The root directory to resolve the patterns against.
+    Returns:
+        list[Path]: A sorted list of resolved file paths.
     """
     files = set()
 
@@ -148,6 +174,16 @@ def resolve_globs(patterns: Iterable[str], root_path: Path) -> list[Path]:
 def apply_excludes(
     paths: list[Path], exclude_patterns: list[str], root_path: Path
 ) -> list[Path]:
+    """
+    Applies exclusion patterns to a list of paths, returning only those that do not match any of the patterns.
+
+    Parameters:
+        paths (list[Path]): The list of paths to filter.
+        exclude_patterns (list[str]): A list of glob patterns to exclude.
+        root_path (Path): The root directory to resolve the paths against.
+    Returns:
+        list[Path]: A list of paths that do not match any of the exclusion patterns.
+    """
     result = []
     for path in paths:
         try:

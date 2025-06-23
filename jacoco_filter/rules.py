@@ -102,13 +102,19 @@ class FilterRule:
 
                         if not class_match:
                             logger.debug(
-                                "Rule '%s' did not match class '%s' or '%s'", self.pattern, fqcn, simple_class
+                                "Rule '%s' did not match class '%s' or '%s'",
+                                self.pattern,
+                                fqcn,
+                                simple_class,
                             )
                             return False
 
                     matched = fnmatchcase(method_name, self.target_method_pattern)
                     logger.debug(
-                        "Matching method '%s' with rule '%s' => %s", method_name, self.pattern, matched
+                        "Matching method '%s' with rule '%s' => %s",
+                        method_name,
+                        self.pattern,
+                        matched,
                     )
                     return matched
 

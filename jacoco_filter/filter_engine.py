@@ -15,6 +15,7 @@ class FilterEngine:
     """
     FilterEngine applies filtering rules to a JaCoCo report.
     """
+
     def __init__(self, rules: list[FilterRule]):
         self.rules = rules
         self.stats = {"methods_removed": 0, "classes_removed": 0}

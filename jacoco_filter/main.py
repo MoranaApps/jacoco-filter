@@ -60,7 +60,9 @@ def main():
             engine = FilterEngine(args["rules"])
             engine.apply(report)
             logger.info(
-                "Removed %s class(es), %s method(s)", engine.stats['classes_removed'], engine.stats['methods_removed']
+                "Removed %s class(es), %s method(s)",
+                engine.stats["classes_removed"],
+                engine.stats["methods_removed"],
             )
 
             logger.info("Updating counters...")

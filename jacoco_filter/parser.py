@@ -1,6 +1,7 @@
 """
 Parser for JaCoCo XML reports.
 """
+
 import logging
 
 from pathlib import Path
