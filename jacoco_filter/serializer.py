@@ -24,6 +24,4 @@ class ReportSerializer:
             None
         """
         tree = etree.ElementTree(self.report.xml_element)
-        tree.write(
-            str(output_path), encoding="utf-8", pretty_print=True, xml_declaration=True
-        )
+        tree.write(str(output_path), encoding="utf-8", pretty_print=True, xml_declaration=True)

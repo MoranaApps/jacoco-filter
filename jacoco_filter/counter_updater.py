@@ -75,16 +75,16 @@ class CounterUpdater:
                     total_covered += counter.covered
 
         # Create new Counter and XML element
+        new_elem = None
+
         if children and hasattr(children[0], "xml_element"):
             parent_elem = children[0].xml_element.getparent()
 
             if parent_elem is not None:
-                # Remove all existing instruction counters
                 for old_counter in parent_elem.findall("counter"):
                     if old_counter.get("type") == "INSTRUCTION":
                         parent_elem.remove(old_counter)
 
-                # Create and insert the new one
                 new_elem = ET.Element(
                     "counter",
                     type="INSTRUCTION",
@@ -92,8 +92,6 @@ class CounterUpdater:
                     covered=str(total_covered),
                 )
                 parent_elem.append(new_elem)
-        else:
-            new_elem = None
 
         return [
             Counter(

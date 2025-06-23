@@ -65,9 +65,7 @@ def parse_arguments() -> dict:
         default=[],
         help='Optional glob patterns to exclude paths from processing (e.g. "**/test/**")',
     )
-    parser.add_argument(
-        "--rules", "-r", type=Path, help="Path to the filter rules file"
-    )
+    parser.add_argument("--rules", "-r", type=Path, help="Path to the filter rules file")
     parser.add_argument(
         "--verbose",
         "-v",
@@ -97,13 +95,11 @@ def parse_arguments() -> dict:
         merged["inputs"] = config.get("inputs", [])
 
     if not merged["inputs"]:
-        logger.error(
-            "No input files provided. Use --inputs or define them in the config."
-        )
+        logger.error("No input files provided. Use --inputs or define them in the config.")
 
     # -----------
     # Exclude paths
-    if args.exclude_paths is not None:
+    if len(args.exclude_paths) > 0:
         merged["exclude_paths"] = args.exclude_paths
     else:
         merged["exclude_paths"] = config.get("exclude_paths", [])
@@ -170,9 +166,7 @@ def resolve_globs(patterns: Iterable[str], root_path: Path) -> list[Path]:
     return sorted(p.resolve() for p in files if p.is_file())
 
 
-def apply_excludes(
-    paths: list[Path], exclude_patterns: list[str], root_path: Path
-) -> list[Path]:
+def apply_excludes(paths: list[Path], exclude_patterns: list[str], root_path: Path) -> list[Path]:
     """
     Applies exclusion patterns to a list of paths, returning only those that do not match any of the patterns.
 

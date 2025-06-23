@@ -35,9 +35,7 @@ class FilterEngine:
             for cls in package.classes:
                 fqcn = cls.name.replace("/", ".")
                 simple_class_name = fqcn.split(".")[-1]
-                sourcefilename = getattr(
-                    cls, "sourcefilename", cls.xml_element.get("sourcefilename", "")
-                )
+                sourcefilename = getattr(cls, "sourcefilename", cls.xml_element.get("sourcefilename", ""))
 
                 class_attrs = {
                     "fully_qualified_classname": fqcn,
@@ -45,12 +43,8 @@ class FilterEngine:
                 }
 
                 # Check if class should be removed by class or file rule
-                if self._matches(class_attrs, "class") or self._matches(
-                    class_attrs, "file"
-                ):
-                    logger.debug(
-                        "Removing class due to rule: %s (%s)", fqcn, sourcefilename
-                    )
+                if self._matches(class_attrs, "class") or self._matches(class_attrs, "file"):
+                    logger.debug("Removing class due to rule: %s (%s)", fqcn, sourcefilename)
                     self.stats["classes_removed"] += 1
                     parent_elem = cls.xml_element.getparent()
                     if parent_elem is not None:
@@ -67,14 +61,9 @@ class FilterEngine:
                     }
 
                     if self._matches(method_attrs, "method"):
-                        logger.debug(
-                            "Removing method due to rule: %s#%s", fqcn, method.name
-                        )
+                        logger.debug("Removing method due to rule: %s#%s", fqcn, method.name)
                         self.stats["methods_removed"] += 1
-                        if (
-                            cls.xml_element is not None
-                            and method.xml_element is not None
-                        ):
+                        if cls.xml_element is not None and method.xml_element is not None:
                             cls.xml_element.remove(method.xml_element)
                         continue
 
@@ -97,8 +86,6 @@ class FilterEngine:
         """
         for rule in self.rules:
             if rule.scope == scope and rule.matches(target):
-                logger.debug(
-                    "Matching rule '%s' on scope '%s' => matched", rule.pattern, scope
-                )
+                logger.debug("Matching rule '%s' on scope '%s' => matched", rule.pattern, scope)
                 return True
         return False

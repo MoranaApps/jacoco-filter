@@ -48,9 +48,7 @@ class FilterRule:
         """
         if self.scope == ScopeEnum.METHOD:
             if "#" in self.pattern:
-                self.target_class_pattern, self.target_method_pattern = (
-                    self.pattern.split("#", 1)
-                )
+                self.target_class_pattern, self.target_method_pattern = self.pattern.split("#", 1)
             else:
                 self.target_class_pattern = None
                 self.target_method_pattern = self.pattern
@@ -72,16 +70,12 @@ class FilterRule:
                     return fnmatchcase(target["sourcefilename"], self.pattern)
 
                 case ScopeEnum.CLASS:
-                    return fnmatchcase(
-                        target["fully_qualified_classname"], self.pattern
-                    )
+                    return fnmatchcase(target["fully_qualified_classname"], self.pattern)
 
                 case ScopeEnum.METHOD:
                     method_name = target["method_name"]
                     fqcn = target.get("fully_qualified_classname", "")
-                    simple_class = target.get(
-                        "simple_class_name", fqcn.split(".")[-1] if fqcn else ""
-                    )
+                    simple_class = target.get("simple_class_name", fqcn.split(".")[-1] if fqcn else "")
 
                     logger.debug(
                         "METHOD: fqcn=%s, simple_class=%s, method=%s",
@@ -96,9 +90,9 @@ class FilterRule:
                     )
 
                     if self.target_class_pattern:
-                        class_match = fnmatchcase(
-                            fqcn, self.target_class_pattern
-                        ) or fnmatchcase(simple_class, self.target_class_pattern)
+                        class_match = fnmatchcase(fqcn, self.target_class_pattern) or fnmatchcase(
+                            simple_class, self.target_class_pattern
+                        )
 
                         if not class_match:
                             logger.debug(
@@ -122,9 +116,7 @@ class FilterRule:
                     return False
 
         except KeyError as e:
-            raise KeyError(
-                f"Missing key '{e.args[0]}' in target dict for rule: {self.scope}:{self.pattern}"
-            ) from e
+            raise KeyError(f"Missing key '{e.args[0]}' in target dict for rule: {self.scope}:{self.pattern}") from e
 
     @staticmethod
     def is_valid_line(line: str) -> bool:
@@ -137,12 +129,7 @@ class FilterRule:
             bool: True if the line is a valid filter rule, False otherwise.
         """
         line = line.strip()
-        return (
-            bool(line)
-            and not line.startswith("#")
-            and ":" in line
-            and any(scope in line for scope in ScopeEnum)
-        )
+        return bool(line) and not line.startswith("#") and ":" in line and any(scope in line for scope in ScopeEnum)
 
     @classmethod
     def parse(cls, line: str) -> "FilterRule":
