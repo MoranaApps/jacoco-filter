@@ -55,8 +55,8 @@ def parse_arguments() -> dict:
         "--inputs",
         "-i",
         nargs="*",
-        help='One or more glob patterns or directories to recursively collect input XML files '
-             '(e.g. "target/**/jacoco.xml")',
+        help="One or more glob patterns or directories to recursively collect input XML files "
+        '(e.g. "target/**/jacoco.xml")',
     )
     parser.add_argument(
         "--exclude-paths",
@@ -145,10 +145,10 @@ def parse_arguments() -> dict:
 
     # -----------
     logger.info("Final configuration:")
-    logger.info("   inputs: %s", merged['inputs'])
-    logger.info("   exclude_paths: %s", merged['exclude_paths'])
-    logger.info("   rules: %s", merged['rules'])
-    logger.info("   verbose logging: %s", merged['verbose'])
+    logger.info("   inputs: %s", merged["inputs"])
+    logger.info("   exclude_paths: %s", merged["exclude_paths"])
+    logger.info("   rules: %s", merged["rules"])
+    logger.info("   verbose logging: %s", merged["verbose"])
 
     return merged
 
