@@ -1,12 +1,28 @@
-# jacoco_filter/counter_updater.py
+"""
+This module provides functionality to update Jacoco counters in a report.
+"""
 
-from jacoco_filter.model import JacocoReport, Package, Class, Method, Counter
+import lxml.etree as ET
+
+from jacoco_filter.model import JacocoReport, Counter
 
 
 class CounterUpdater:
+    """
+    CounterUpdater is responsible for cleaning non-instruction counters
+    """
+
     NON_INSTRUCTION_TYPES = {"LINE", "METHOD", "CLASS", "BRANCH", "COMPLEXITY"}
 
     def apply(self, report: JacocoReport):
+        """
+        Apply the counter updates to the Jacoco report.
+
+        Parameters:
+            report (JacocoReport): The Jacoco report to update.
+        Returns:
+            None
+        """
         for package in report.packages:
             # Clean non-instruction counters at package level too (optional)
             self._clean_non_instruction_counters(package.counters)
@@ -24,6 +40,14 @@ class CounterUpdater:
         report.counters = self._aggregate_instruction_counters(report.packages)
 
     def _clean_non_instruction_counters(self, counters: list[Counter]):
+        """
+        Clean non-instruction counters by setting missed and covered to 0.
+
+        Parameters:
+            counters (list[Counter]): List of counters to clean.
+        Returns:
+            None
+        """
         for counter in counters:
             if counter.type in self.NON_INSTRUCTION_TYPES:
                 counter.missed = 0
@@ -33,6 +57,14 @@ class CounterUpdater:
                 counter.xml_element.set("covered", "0")
 
     def _aggregate_instruction_counters(self, children: list) -> list[Counter]:
+        """
+        Aggregate instruction counters from the children elements.
+
+        Parameters:
+            children (list): List of children elements (Package, Class, Method).
+        Returns:
+            list[Counter]: List containing a single Counter with aggregated instruction data.
+        """
         total_missed = 0
         total_covered = 0
 
@@ -43,22 +75,29 @@ class CounterUpdater:
                     total_covered += counter.covered
 
         # Create new Counter and XML element
+        new_elem = None
+
         if children and hasattr(children[0], "xml_element"):
-            import lxml.etree as ET
             parent_elem = children[0].xml_element.getparent()
 
             if parent_elem is not None:
-                # Remove all existing instruction counters
                 for old_counter in parent_elem.findall("counter"):
                     if old_counter.get("type") == "INSTRUCTION":
                         parent_elem.remove(old_counter)
 
-                # Create and insert the new one
-                new_elem = ET.Element("counter", type="INSTRUCTION",
-                                      missed=str(total_missed),
-                                      covered=str(total_covered))
+                new_elem = ET.Element(
+                    "counter",
+                    type="INSTRUCTION",
+                    missed=str(total_missed),
+                    covered=str(total_covered),
+                )
                 parent_elem.append(new_elem)
-        else:
-            new_elem = None
 
-        return [Counter(type="INSTRUCTION", missed=total_missed, covered=total_covered, xml_element=new_elem)]
+        return [
+            Counter(
+                type="INSTRUCTION",
+                missed=total_missed,
+                covered=total_covered,
+                xml_element=new_elem,
+            )
+        ]

@@ -27,3 +27,5 @@ rules = [
     "method:com.example.util.MyHelper#getInternalState",
     "method:TestSpec#test*"
 ]
+
+verbose = true
