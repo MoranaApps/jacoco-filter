@@ -1,4 +1,7 @@
-# jacoco_filter/rules.py
+"""
+This module defines the FilterRule class and related functionality for parsing and applying filter rules
+"""
+
 import logging
 import re
 from dataclasses import dataclass, field
@@ -12,6 +15,10 @@ logger = logging.getLogger(__name__)
 
 
 class ScopeEnum(str, Enum):
+    """
+    Enum representing the scope of a filter rule.
+    """
+
     FILE = "file"
     CLASS = "class"
     METHOD = "method"
@@ -23,12 +30,22 @@ class ScopeEnum(str, Enum):
 
 @dataclass
 class FilterRule:
+    """
+    Represents a filter rule for matching files, classes, or methods based on patterns.
+    """
+
     scope: ScopeEnum  # "file", "class", or "method"
     pattern: str
     target_class_pattern: Optional[str] = field(init=False, default=None)
     target_method_pattern: Optional[str] = field(init=False, default=None)
 
     def __post_init__(self):
+        """
+        Post-initialization processing to split the pattern into class and method patterns if applicable.
+
+        Returns:
+            None
+        """
         if self.scope == ScopeEnum.METHOD:
             if "#" in self.pattern:
                 self.target_class_pattern, self.target_method_pattern = (
@@ -39,6 +56,16 @@ class FilterRule:
                 self.target_method_pattern = self.pattern
 
     def matches(self, target: dict) -> bool:
+        """
+        Checks if the target matches the filter rule based on its scope and pattern.
+
+        Parameters:
+            target (dict): A dictionary representing the target to match against the rule.
+        Returns:
+            bool: True if the target matches the rule, False otherwise.
+        Raises:
+            KeyError: If a required key is missing in the target dictionary.
+        """
         try:
             match self.scope:
                 case ScopeEnum.FILE:
@@ -57,10 +84,15 @@ class FilterRule:
                     )
 
                     logger.debug(
-                        f"METHOD: fqcn={fqcn}, simple_class={simple_class}, method={method_name}"
+                        "METHOD: fqcn=%s, simple_class=%s, method=%s",
+                        fqcn,
+                        simple_class,
+                        method_name,
                     )
                     logger.debug(
-                        f"Rule: class_pattern={self.target_class_pattern}, method_pattern={self.target_method_pattern}"
+                        "Rule: class_pattern=%s, method_pattern=%s",
+                        self.target_class_pattern,
+                        self.target_method_pattern,
                     )
 
                     if self.target_class_pattern:
@@ -70,13 +102,13 @@ class FilterRule:
 
                         if not class_match:
                             logger.debug(
-                                f"Rule '{self.pattern}' did not match class '{fqcn}' or '{simple_class}'"
+                                "Rule '%s' did not match class '%s' or '%s'", self.pattern, fqcn, simple_class
                             )
                             return False
 
                     matched = fnmatchcase(method_name, self.target_method_pattern)
                     logger.debug(
-                        f"Matching method '{method_name}' with rule '{self.pattern}' => {matched}"
+                        "Matching method '%s' with rule '%s' => %s", method_name, self.pattern, matched
                     )
                     return matched
 
@@ -86,10 +118,18 @@ class FilterRule:
         except KeyError as e:
             raise KeyError(
                 f"Missing key '{e.args[0]}' in target dict for rule: {self.scope}:{self.pattern}"
-            )
+            ) from e
 
     @staticmethod
     def is_valid_line(line: str) -> bool:
+        """
+        Checks if a line is a valid filter rule line.
+
+        Parameters:
+            line (str): The line to check.
+        Returns:
+            bool: True if the line is a valid filter rule, False otherwise.
+        """
         line = line.strip()
         return (
             bool(line)
@@ -100,6 +140,17 @@ class FilterRule:
 
     @classmethod
     def parse(cls, line: str) -> "FilterRule":
+        """
+        Parses a line into a FilterRule object.
+
+        Parameters:
+            cls: The class to instantiate.
+            line (str): The line to parse.
+        Returns:
+            FilterRule: An instance of FilterRule.
+        Raises:
+            ValueError: If the line is not a valid filter rule.
+        """
         if ":" not in line:
             raise ValueError(f"Missing ':' in rule: '{line}'")
 
@@ -117,6 +168,16 @@ class FilterRule:
 
 
 def load_filter_rules(path: Path) -> list[FilterRule]:
+    """
+    Loads filter rules from a file at the given path.
+
+    Parameters:
+        path (Path): The path to the file containing filter rules.
+    Returns:
+        list[FilterRule]: A list of FilterRule objects parsed from the file.
+    Raises:
+        ValueError: If the file contains invalid rule formats.
+    """
     rules = []
 
     with path.open("r", encoding="utf-8") as f:
