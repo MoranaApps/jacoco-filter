@@ -68,3 +68,4 @@ class Package:
 class JacocoReport:
     packages: list[Package] = field(default_factory=list)
     xml_element: Any = None
+    counters: list[Counter] = field(default_factory=list)

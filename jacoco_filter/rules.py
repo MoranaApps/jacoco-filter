@@ -164,13 +164,13 @@ class FilterRule:
         scope = scope.strip()
         pattern = pattern.strip()
 
-        if scope not in ScopeEnum:
+        if not ScopeEnum.has_value(scope):
             raise ValueError(f"Invalid scope '{scope}' in rule: '{line}'")
 
         if not pattern:
             raise ValueError(f"Empty pattern in rule: '{line}'")
 
-        return cls(scope, pattern)
+        return cls(ScopeEnum(scope), pattern)
 
 
 def load_filter_rules(path: Path) -> list[FilterRule]:

@@ -110,7 +110,7 @@ def parse_arguments() -> dict:
 
     # -----------
     # Rules
-    merged["rules"]: list[FilterRule] = []
+    merged["rules"] = []
 
     if args.rules:
         # when rules are provided via CLI
@@ -140,8 +140,7 @@ def parse_arguments() -> dict:
 
     # -----------
     # Verbose logging
-    if args.verbose:
-        merged["verbose"] = True
+    merged["verbose"] = args.verbose or config.get("verbose", False)
 
     # -----------
     logger.info("Final configuration:")
@@ -163,7 +162,7 @@ def resolve_globs(patterns: Iterable[str], root_path: Path) -> list[Path]:
     Returns:
         list[Path]: A sorted list of resolved file paths.
     """
-    files = set()
+    files: set[Path] = set()
 
     for pattern in patterns:
         files.update(root_path.glob(pattern))

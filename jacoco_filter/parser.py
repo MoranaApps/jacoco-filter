@@ -35,18 +35,18 @@ class JacocoParser:
         report = JacocoReport(xml_element=root)
 
         for pkg_elem in root.findall("package"):
-            pkg = Package(xml_element=pkg_elem, name=pkg_elem.get("name"))
+            pkg = Package(xml_element=pkg_elem, name=pkg_elem.get("name") or "")
             report.packages.append(pkg)
 
             for cls_elem in pkg_elem.findall("class"):
-                cls = Class(xml_element=cls_elem, name=cls_elem.get("name"))
+                cls = Class(xml_element=cls_elem, name=cls_elem.get("name") or "")
                 pkg.classes.append(cls)
 
                 for meth_elem in cls_elem.findall("method"):
                     meth = Method(
                         xml_element=meth_elem,
-                        name=meth_elem.get("name"),
-                        desc=meth_elem.get("desc"),
+                        name=meth_elem.get("name") or "",
+                        desc=meth_elem.get("desc") or "",
                         line=meth_elem.get("line"),
                     )
                     cls.methods.append(meth)
