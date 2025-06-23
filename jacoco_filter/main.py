@@ -14,6 +14,7 @@ from jacoco_filter.serializer import ReportSerializer
 
 logger = logging.getLogger(__name__)
 
+
 def main():
     try:
 
@@ -49,7 +50,9 @@ def main():
             logger.info("Applying filters...")
             engine = FilterEngine(args["rules"])
             engine.apply(report)
-            logger.info(f"Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)")
+            logger.info(
+                f"Removed {engine.stats['classes_removed']} class(es), {engine.stats['methods_removed']} method(s)"
+            )
 
             logger.info("Updating counters...")
             updater = CounterUpdater()

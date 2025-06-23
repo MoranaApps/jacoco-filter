@@ -53,7 +53,7 @@ def parse_arguments() -> dict:
         "-v",
         action="store_true",
         default=False,
-        help="Enable verbose logging (DEBUG level)"
+        help="Enable verbose logging (DEBUG level)",
     )
 
     args = parser.parse_args()
@@ -77,7 +77,9 @@ def parse_arguments() -> dict:
         merged["inputs"] = config.get("inputs", [])
 
     if not merged["inputs"]:
-        logger.error("No input files provided. Use --inputs or define them in the config.")
+        logger.error(
+            "No input files provided. Use --inputs or define them in the config."
+        )
 
     # -----------
     # Exclude paths
