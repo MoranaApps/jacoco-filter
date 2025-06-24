@@ -83,6 +83,7 @@ def parse_arguments() -> dict:
         sys.exit(1)
 
     config = load_config(args.config) if args.config else {}
+    logger.info("Config values: '%s'", str(config))
 
     # CLI has priority over config
     merged = {}
