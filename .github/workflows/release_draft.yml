@@ -150,6 +150,6 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            ./artifacts/jacoco-filter-linux
-            ./artifacts/jacoco-filter-macos
-            ./artifacts/jacoco-filter-win
+            ./artifacts/jacoco-filter-Linux
+            ./artifacts/jacoco-filter-macOS
+            ./artifacts/jacoco-filter-Windows
