@@ -43,36 +43,36 @@ runs:
         pip install -r "${{ github.action_path }}/requirements.txt"
       shell: bash
 
-      - name: Run jacoco-filter
-        shell: bash
-        run: |
-          source .venv/bin/activate
-          
-          args=()
-          
-          if [[ "${{ inputs.config }}" != "" ]]; then
-            args+=(--config "${{ inputs.config }}")
-          fi
-          
-          if [[ "${{ inputs.inputs }}" != "" ]]; then
-            args+=(--inputs ${{ inputs.inputs }})
-          fi
-          
-          if [[ "${{ inputs.exclude-paths }}" != "" ]]; then
-            args+=(--exclude-paths ${{ inputs.exclude-paths }})
-          fi
-          
-          if [[ "${{ inputs.rules }}" != "" ]]; then
-            args+=(--rules "${{ inputs.rules }}")
-          fi
-          
-          if [[ "${{ inputs.verbose }}" == "true" ]]; then
-            args+=(--verbose)
-          fi
-          
-          echo "Running with args: ${args[@]}"
-          python "${{ github.action_path }}/run_filter.py" "${args[@]}"
-          
+    - name: Run jacoco-filter
+      shell: bash
+      run: |
+        source .venv/bin/activate
+        
+        args=()
+        
+        if [[ "${{ inputs.config }}" != "" ]]; then
+          args+=(--config "${{ inputs.config }}")
+        fi
+        
+        if [[ "${{ inputs.inputs }}" != "" ]]; then
+          args+=(--inputs ${{ inputs.inputs }})
+        fi
+        
+        if [[ "${{ inputs.exclude-paths }}" != "" ]]; then
+          args+=(--exclude-paths ${{ inputs.exclude-paths }})
+        fi
+        
+        if [[ "${{ inputs.rules }}" != "" ]]; then
+          args+=(--rules "${{ inputs.rules }}")
+        fi
+        
+        if [[ "${{ inputs.verbose }}" == "true" ]]; then
+          args+=(--verbose)
+        fi
+        
+        echo "Running with args: ${args[@]}"
+        python "${{ github.action_path }}/run_filter.py" "${args[@]}"
+
 branding:
   icon: "filter"
   color: "blue"
