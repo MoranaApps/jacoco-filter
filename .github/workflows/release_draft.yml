@@ -135,10 +135,9 @@ jobs:
         with:
           path: artifacts
 
-      - name: Unzip artifacts
+      - name: List artifacts
         run: |
-          find artifacts -type f -name "jacoco-filter-*" -exec cp {} . \;
-          ls -lh
+          ls -lh ./artifacts
 
       - name: Create draft release
         uses: softprops/action-gh-release@v1
@@ -151,6 +150,6 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            ./jacoco-filter-linux
-            ./jacoco-filter-macos
-            ./jacoco-filter-win.exe
+            ./artifacts/jacoco-filter-linux.zip
+            ./artifacts/jacoco-filter-macos.zip
+            ./artifacts/jacoco-filter-win.zip
