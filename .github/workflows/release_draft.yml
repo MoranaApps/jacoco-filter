@@ -86,7 +86,7 @@ jobs:
         id: check-version-from-tag
         uses: AbsaOSS/version-tag-check@v0.3.0
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           github-repository: ${{ github.repository }}
           version-tag: ${{ github.event.inputs.from-tag-name }}
@@ -96,7 +96,7 @@ jobs:
         id: generate_release_notes
         uses: AbsaOSS/generate-release-notes@v0.6.0
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag-name: ${{ github.event.inputs.tag-name }}
           from-tag-name: ${{ github.event.inputs.from-tag-name }}
@@ -142,13 +142,13 @@ jobs:
             });
 
             console.log(`Tag created: ${tag}`);
-          github-token: ${{ secrets.TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           tag-name: ${{ github.event.inputs.tag-name }}
 
       - name: Create draft release
         uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: ${{ github.event.inputs.tag-name }}
           body: ${{ steps.generate_release_notes.outputs.release-notes }}
