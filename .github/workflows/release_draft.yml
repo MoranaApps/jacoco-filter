@@ -55,7 +55,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-filter-${{ runner.os }}
-          path: dist/*
+          path: |
+            jacoco-filter-*
 
   release-draft:
     name: Create Draft Release
@@ -130,6 +131,16 @@ jobs:
           github-token: ${{ secrets.TOKEN }}
           tag-name: ${{ github.event.inputs.tag-name }}
 
+      - name: Download all binary artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Unzip artifacts
+        run: |
+          find artifacts -type f -name "jacoco-filter-*" -exec cp {} . \;
+          ls -lh
+
       - name: Create draft release
         uses: softprops/action-gh-release@v1
         env:
@@ -141,4 +152,6 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            dist/jacoco-filter/jacoco-filter
+            jacoco-filter-linux
+            jacoco-filter-macos
+            jacoco-filter-win.exe
