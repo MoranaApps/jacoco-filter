@@ -136,13 +136,17 @@ jobs:
           path: artifacts
 
       - name: List artifacts
-        run: |
-          ls ./artifacts
+        run: ls ./artifacts
 
-      - name: Show artifacts
+      - name: Zip platform binaries
         run: |
-          echo "Artifacts folder:"
-          find ./artifacts -type f -exec ls -lh {} \;
+          cd artifacts
+          zip -r jacoco-filter-Linux.zip jacoco-filter-Linux
+          zip -r jacoco-filter-macOS.zip jacoco-filter-macOS
+          zip -r jacoco-filter-Windows.zip jacoco-filter-Windows
+
+      - name: List artifacts
+        run: ls .
 
       - name: Create draft release
         uses: softprops/action-gh-release@v1
