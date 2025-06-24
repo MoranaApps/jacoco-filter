@@ -54,14 +54,14 @@ jobs:
       - name: Verify and list zipped files
         run: |
           echo "Listing files in dist/"
-          ls -lh dist/
+          ls dist/
           echo "Done."
 
       - name: Upload zipped binary artifact
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-filter-${{ runner.os }}
-          path: dist/jacoco-filter-${{ runner.os == 'Windows' && 'win.exe' || runner.os == 'macOS' && 'macos.zip' || 'linux.zip' }}
+          path: dist/jacoco-filter-${{ runner.os == 'Windows' && 'win.exe' || runner.os == 'macOS' && 'macos' || 'linux' }}
 
   release-draft:
     name: Create Draft Release
