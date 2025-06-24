@@ -50,7 +50,7 @@ runs:
         
         args=()
         
-        echo "Configured inputs:"
+        echo "Configured CI inputs:"
         echo "  config: '${{ inputs.config }}'"
         echo "  inputs: '${{ inputs.inputs }}'"
         echo "  exclude-paths: '${{ inputs.exclude-paths }}'"
@@ -77,7 +77,11 @@ runs:
           args+=(--verbose)
         fi
         
-        echo "Running with args: ${args[@]}"
+        echo "Running jacoco-filter with args:"
+        for arg in "${args[@]}"; do
+          echo "  $arg"
+        done
+        
         python "${{ github.action_path }}/run_filter.py" "${args[@]}"
 
 branding:
