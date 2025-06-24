@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-filter-${{ runner.os }}
-          path: dist/*
+          path: dist/jacoco-filter-${RUNNER_OS}*
 
   release-draft:
     name: Create Draft Release
