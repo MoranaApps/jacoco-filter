@@ -143,7 +143,7 @@ jobs:
       - name: Create draft release
         uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           name: ${{ github.event.inputs.tag-name }}
           body: ${{ steps.generate_release_notes.outputs.release-notes }}
