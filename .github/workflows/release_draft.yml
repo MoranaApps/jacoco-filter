@@ -43,7 +43,7 @@ jobs:
       - name: Rename artifact
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
-            mv dist/jacoco-filter/jacoco-filter.exe dist/jacoco-filter/jacoco-filter-win.exe
+            mv dist/jacoco-filter/jacoco-filter.exe dist/jacoco-filter-win.exe
           elif [ "$RUNNER_OS" = "macOS" ]; then
             mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-macos
           else
