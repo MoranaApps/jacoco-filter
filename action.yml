@@ -1,0 +1,62 @@
+name: "jacoco-filter"
+description: "Filter JaCoCo XML reports and update coverage counters using rule-based exclusion."
+author: "Miroslav Pojer"
+
+inputs:
+  config:
+    description: "Path to the TOML config file (e.g., jacoco_filter.toml)"
+    required: false
+  inputs:
+    description: "Glob patterns or paths to JaCoCo XML files"
+    required: false
+  exclude-paths:
+    description: "Glob patterns to exclude from input files"
+    required: false
+  rules:
+    description: "Path to the filter rules file"
+    required: false
+  verbose:
+    description: "Enable verbose logging"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check Python version and install dependencies
+      run: |
+        python_version=$(python --version 2>&1 | grep -oP '\d+\.\d+\.\d+')
+        min_version="3.12.0"
+
+        version() { echo "$@" | awk -F. '{ printf("%d%03d%03d\n", $1,$2,$3); }'; }
+
+        echo "Python: $python_version, Required: $min_version"
+
+        if [ $(version $python_version) -lt $(version $min_version) ]; then
+          echo "Python version must be >= $min_version"
+          exit 1
+        fi
+
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install --upgrade pip
+        pip install -r "${{ github.action_path }}/requirements.txt"
+      shell: bash
+
+    - name: Run jacoco-filter
+      run: |
+        source .venv/bin/activate
+
+        args=()
+        [ -n "${{ inputs.config }}" ] && args+=(--config "${{ inputs.config }}")
+        [ -n "${{ inputs.inputs }}" ] && args+=(--inputs ${{ inputs.inputs }})
+        [ -n "${{ inputs.exclude-paths }}" ] && args+=(--exclude-paths ${{ inputs.exclude-paths }})
+        [ -n "${{ inputs.rules }}" ] && args+=(--rules "${{ inputs.rules }}")
+        [ "${{ inputs.verbose }}" = "true" ] && args+=(--verbose)
+
+        python "${{ github.action_path }}/run_filter.py" "${args[@]}"
+      shell: bash
+
+branding:
+  icon: "filter"
+  color: "blue"
