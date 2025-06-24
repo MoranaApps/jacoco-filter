@@ -135,13 +135,6 @@ jobs:
         with:
           path: artifacts
 
-      - name: Verify and list files
-        run: |
-          echo "Listing files in dist/"
-          ls -l artifacts
-          echo "Done."
-        shell: bash
-
       - name: Unzip artifacts
         run: |
           find artifacts -type f -name "jacoco-filter-*" -exec cp {} . \;
@@ -158,6 +151,6 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            jacoco-filter-linux
-            jacoco-filter-macos
-            jacoco-filter-win.exe
+            ./jacoco-filter-linux
+            ./jacoco-filter-macos
+            ./jacoco-filter-win.exe
