@@ -24,9 +24,9 @@ def main():
         None
     """
     try:
-        args = parse_arguments()
         setup_logging(args["verbose"])
         logger = logging.getLogger(__name__)
+        args = parse_arguments()
         root_dir = Path.cwd()
 
         logger.info("jacoco-filter started")
