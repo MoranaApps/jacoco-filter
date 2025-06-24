@@ -43,11 +43,11 @@ jobs:
       - name: Rename artifact
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
-            mv dist/jacoco-filter/jacoco-filter.exe dist/jacoco-filter-win.exe
+            mv dist/jacoco-filter/jacoco-filter.exe dist/jacoco-filter/jacoco-filter-win.exe
           elif [ "$RUNNER_OS" = "macOS" ]; then
-            mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-macos
+            mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter/jacoco-filter-macos
           else
-            mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-linux
+            mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter/jacoco-filter-linux
           fi
         shell: bash
 
@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-filter-${{ runner.os }}
-          path: dist/jacoco-filter-${{ runner.os == 'Windows' && 'win.exe' || runner.os == 'macOS' && 'macos' || 'linux' }}
+          path: dist/*
 
   release-draft:
     name: Create Draft Release
@@ -135,10 +135,18 @@ jobs:
         with:
           path: artifacts
 
-      - name: Unzip artifacts
+      - name: List artifacts
+        run: ls ./artifacts
+
+      - name: Zip platform binaries
         run: |
-          find artifacts -type f -name "jacoco-filter-*" -exec cp {} . \;
-          ls -lh
+          cd artifacts
+          zip -r jacoco-filter-Linux.zip jacoco-filter-Linux
+          zip -r jacoco-filter-macOS.zip jacoco-filter-macOS
+          zip -r jacoco-filter-Windows.zip jacoco-filter-Windows
+
+      - name: List artifacts
+        run: ls .
 
       - name: Create draft release
         uses: softprops/action-gh-release@v1
@@ -151,6 +159,6 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            ./jacoco-filter-linux
-            ./jacoco-filter-macos
-            ./jacoco-filter-win.exe
+            ./artifacts/jacoco-filter-Linux.zip
+            ./artifacts/jacoco-filter-macOS.zip
+            ./artifacts/jacoco-filter-Windows.zip
