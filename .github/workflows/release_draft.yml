@@ -44,18 +44,21 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
             mv dist/jacoco-filter/jacoco-filter.exe dist/jacoco-filter-win.exe
+            zip jacoco-filter-win.zip jacoco-filter/jacoco-filter.exe
           elif [ "$RUNNER_OS" = "macOS" ]; then
             mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-macos
+            zip jacoco-filter-macos.zip jacoco-filter/jacoco-filter
           else
             mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-linux
+            zip jacoco-filter-linux.zip jacoco-filter/jacoco-filter
           fi
         shell: bash
 
-      - name: Upload artifact
+      - name: Upload zipped binary artifact
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-filter-${{ runner.os }}
-          path: dist/jacoco-filter-${RUNNER_OS}*
+          path: dist/jacoco-filter-*.zip
 
   release-draft:
     name: Create Draft Release
