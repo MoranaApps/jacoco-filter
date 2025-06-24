@@ -137,7 +137,12 @@ jobs:
 
       - name: List artifacts
         run: |
-          ls -l ./artifacts
+          ls ./artifacts
+
+      - name: Show artifacts
+        run: |
+          echo "Artifacts folder:"
+          find ./artifacts -type f -exec ls -lh {} \;
 
       - name: Create draft release
         uses: softprops/action-gh-release@v1
@@ -150,6 +155,6 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            artifacts/jacoco-filter-Linux
-            artifacts/jacoco-filter-macOS
-            artifacts/jacoco-filter-Windows
+            ./artifacts/jacoco-filter-Linux.zip
+            ./artifacts/jacoco-filter-macOS.zip
+            ./artifacts/jacoco-filter-Windows.zip
