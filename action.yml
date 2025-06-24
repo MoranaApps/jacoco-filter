@@ -50,6 +50,13 @@ runs:
         
         args=()
         
+        echo "Configured inputs:"
+        echo "  config: '${{ inputs.config }}'"
+        echo "  inputs: '${{ inputs.inputs }}'"
+        echo "  exclude-paths: '${{ inputs.exclude-paths }}'"
+        echo "  rules: '${{ inputs.rules }}'"
+        echo "  verbose: '${{ inputs.verbose }}'"
+        
         if [[ "${{ inputs.config }}" != "" ]]; then
           args+=(--config "${{ inputs.config }}")
         fi
