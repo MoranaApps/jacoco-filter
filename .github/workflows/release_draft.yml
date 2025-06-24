@@ -44,13 +44,13 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
             mv dist/jacoco-filter/jacoco-filter.exe dist/jacoco-filter-win.exe
-            zip jacoco-filter-win.zip jacoco-filter/jacoco-filter-win.exe
+            zip jacoco-filter-win.zip jacoco-filter-win.exe
           elif [ "$RUNNER_OS" = "macOS" ]; then
             mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-macos
-            zip jacoco-filter-macos.zip jacoco-filter/jacoco-filter-macos
+            zip jacoco-filter-macos.zip jacoco-filter-macos
           else
             mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-linux
-            zip jacoco-filter-linux.zip jacoco-filter/jacoco-filter-linux
+            zip jacoco-filter-linux.zip jacoco-filter-linux
           fi
         shell: bash
 
