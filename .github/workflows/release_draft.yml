@@ -1,0 +1,159 @@
+name: Release - create draft release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag-name:
+        description: 'Name of git tag to be created, and then draft release created. Syntax: "v[0-9]+.[0-9]+.[0-9]+".'
+        required: false
+      from-tag-name:
+        description: 'Name of the git tag from which to detect changes from. Default value: latest tag. Syntax: "v[0-9]+.[0-9]+.[0-9]+".'
+        required: false
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    outputs:
+      linux: ${{ steps.set-names.outputs.linux }}
+      macos: ${{ steps.set-names.outputs.macos }}
+      windows: ${{ steps.set-names.outputs.windows }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --clean jacoco_filter.spec
+
+      - name: Rename artifact
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            mv dist/jacoco-filter/jacoco-filter.exe dist/jacoco-filter-win.exe
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-macos
+          else
+            mv dist/jacoco-filter/jacoco-filter dist/jacoco-filter-linux
+          fi
+        shell: bash
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-filter-${{ runner.os }}
+          path: dist/*
+
+  release-draft:
+    name: Create Draft Release
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5.1.1
+        with:
+          python-version: '3.12'
+
+      - name: Check format of received target tag
+        id: check-version-tag
+        uses: AbsaOSS/version-tag-check@v0.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          github-repository: ${{ github.repository }}
+          version-tag: ${{ github.event.inputs.tag-name }}
+
+      - name: Check format of received from tag
+        if: ${{ github.event.inputs.from-tag-name }}
+        id: check-version-from-tag
+        uses: AbsaOSS/version-tag-check@v0.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          github-repository: ${{ github.repository }}
+          version-tag: ${{ github.event.inputs.from-tag-name }}
+          should-exist: true
+
+      - name: Generate Release Notes
+        id: generate_release_notes
+        uses: AbsaOSS/generate-release-notes@v0.6.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag-name: ${{ github.event.inputs.tag-name }}
+          from-tag-name: ${{ github.event.inputs.from-tag-name }}
+          chapters: |
+            - { title: No entry 🚫, label: duplicate }
+            - { title: Breaking Changes 💥, label: breaking-change }
+            - { title: New Features 🎉, label: enhancement }
+            - { title: Bugfixes 🛠, label: bug }
+            - { title: Infrastructure ⚙️, label: infrastructure }
+            - { title: Silent-live 🤫, label: silent-live }
+            - { title: Documentation 📜, label: documentation }
+            - { title: Closed Epics 📚, label: epic }
+          warnings: true
+
+      - name: Create and Push Tag (standalone)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = core.getInput('tag-name')
+            const ref = `refs/tags/${tag}`;
+            const sha = context.sha;
+            const tagMessage = `${tag} released by GitHub Action`;
+
+            const tagObject = await github.rest.git.createTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: tag,
+              message: tagMessage,
+              object: sha,
+              type: 'commit',
+              tagger: {
+                name: context.actor,
+                email: `${context.actor}@users.noreply.github.com`,
+                date: new Date().toISOString()
+              }
+            });
+
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: ref,
+              sha: tagObject.data.sha
+            });
+
+            console.log(`Tag created: ${tag}`);
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          tag-name: ${{ github.event.inputs.tag-name }}
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.event.inputs.tag-name }}
+          body: ${{ steps.generate_release_notes.outputs.release-notes }}
+          tag_name: ${{ github.event.inputs.tag-name }}
+          draft: true
+          prerelease: false
+          files: |
+            dist/jacoco-filter/jacoco-filter
