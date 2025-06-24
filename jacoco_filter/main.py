@@ -15,8 +15,6 @@ from jacoco_filter.filter_engine import FilterEngine
 from jacoco_filter.counter_updater import CounterUpdater
 from jacoco_filter.serializer import ReportSerializer
 
-logger = logging.getLogger(__name__)
-
 
 def main():
     """
@@ -26,9 +24,9 @@ def main():
         None
     """
     try:
-
         args = parse_arguments()
         setup_logging(args["verbose"])
+        logger = logging.getLogger(__name__)
         root_dir = Path.cwd()
 
         logger.info("jacoco-filter started")
