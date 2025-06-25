@@ -82,7 +82,7 @@ You can use either:
 
 > Note:
 > - Either `--inputs` or `[inputs]` in config must be provided.
-> - Either `--rules` or `inline_rules` must be provided.
+> - Either `--rules` or `rules` must be provided.
 
 ### CLI Options
 
@@ -100,7 +100,7 @@ You can use either:
 
 ### Configuration File: `jacoco_filter.toml`
 
-Use this file to define inputs, exclusion rules, and inline filtering rules.
+Use this file to define inputs, exclusion rules, and filtering rules.
 
 #### Example
 
@@ -114,7 +114,7 @@ exclude_paths = [
   "**/module_A/**"
 ]
 
-inline_rules = [
+rules = [
   "file:*Spec.scala",
   "file:HelperUtil.scala",
   "class:com.example.MyClass",
