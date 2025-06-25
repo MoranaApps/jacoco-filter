@@ -22,7 +22,7 @@ rules = [
     "class:com.example.util.*Helper",
 
     # --- Method Rules ---
-#    "method:get*",
+    "method:get*",
     "method:AnotherClass#get*",
     "method:com.example.util.MyHelper#getInternalState",
     "method:TestSpec#test*"
