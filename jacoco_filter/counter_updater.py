@@ -54,6 +54,11 @@ class CounterUpdater:
 
         report.counters = self._aggregate_instruction_counters_for_report(report)
 
+        # DEBUG
+        for package in report.packages:
+            for sourcefile in package.sourcefiles:
+                logger.debug("Source file '%s' counters: %s", sourcefile.name, sourcefile.counters)
+
     def _clean_non_instruction_counters(self, counters: list[Counter]):
         """
         Clean non-instruction counters by setting missed and covered to 0.
