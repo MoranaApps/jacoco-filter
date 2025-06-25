@@ -23,9 +23,14 @@ class CounterUpdater:
         Returns:
             None
         """
+        self._clean_non_instruction_counters(report.counters)
+
         for package in report.packages:
             # Clean non-instruction counters at package level too (optional)
             self._clean_non_instruction_counters(package.counters)
+
+            for sourcefile in package.sourcefiles:
+                self._clean_non_instruction_counters(sourcefile.counters)
 
             for cls in package.classes:
                 self._clean_non_instruction_counters(cls.counters)
@@ -35,9 +40,12 @@ class CounterUpdater:
 
                 cls.counters = self._aggregate_instruction_counters(cls.methods)
 
+            for sourcefile in package.sourcefiles:
+                sourcefile.counters = self._aggregate_instruction_counters_for_sourcefile(sourcefile.name, package.classes)
+
             package.counters = self._aggregate_instruction_counters(package.classes)
 
-        report.counters = self._aggregate_instruction_counters(report.packages)
+        report.counters = self._aggregate_instruction_counters_for_report(report)
 
     def _clean_non_instruction_counters(self, counters: list[Counter]):
         """
@@ -99,5 +107,63 @@ class CounterUpdater:
                 missed=total_missed,
                 covered=total_covered,
                 xml_element=new_elem,
+            )
+        ]
+
+    def _aggregate_instruction_counters_for_report(self, report: JacocoReport) -> list[Counter]:
+        """
+        Aggregate instruction counters for the entire report.
+        During this process, it sums up all instruction counters across all packages and skip source files.
+
+        Parameters:
+            report (JacocoReport): The Jacoco report to aggregate.
+        Returns:
+            list[Counter]: List containing a single Counter with aggregated instruction data.
+        """
+        total_missed = 0
+        total_covered = 0
+
+        for package in report.packages:
+            for clazz in package.classes:
+                for counter in clazz.counters:
+                    if counter.type == "INSTRUCTION":
+                        total_missed += counter.missed
+                        total_covered += counter.covered
+
+        return [
+            Counter(
+                type="INSTRUCTION",
+                missed=total_missed,
+                covered=total_covered,
+                xml_element=None,  # No XML element for the report level
+            )
+        ]
+
+    def _aggregate_instruction_counters_for_sourcefile(self, sourcefile: str, classes: list) -> list[Counter]:
+        """
+        Aggregate instruction counters for a specific source file.
+
+        Parameters:
+            sourcefile (str): The name of the source file.
+            classes (list): List of classes to aggregate counters from.
+        Returns:
+            list[Counter]: List containing a single Counter with aggregated instruction data.
+        """
+        total_missed = 0
+        total_covered = 0
+
+        for cls in classes:
+            if cls.source_filename == sourcefile:
+                for counter in cls.counters:
+                    if counter.type == "INSTRUCTION":
+                        total_missed += counter.missed
+                        total_covered += counter.covered
+
+        return [
+            Counter(
+                type="INSTRUCTION",
+                missed=total_missed,
+                covered=total_covered,
+                xml_element=None,  # No XML element for the source file level
             )
         ]

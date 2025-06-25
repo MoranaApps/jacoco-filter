@@ -6,7 +6,7 @@ from jacoco_filter.cli import (
     load_config,
     parse_arguments,
     resolve_globs,
-    apply_excludes,
+    apply_excludes, evaluate_parsed_arguments,
 )
 
 
@@ -84,7 +84,7 @@ def test_parse_arguments_with_inputs_and_rules_file(monkeypatch, tmp_path):
     monkeypatch.setattr("jacoco_filter.cli.load_filter_rules", dummy_load_rules)
     monkeypatch.setattr("jacoco_filter.cli.load_config", lambda path: {})
 
-    result = parse_arguments()
+    result = evaluate_parsed_arguments(parse_arguments())
 
     assert result["inputs"] == [str(dummy_input_file)]
     assert result["rules"] == []
@@ -103,7 +103,7 @@ def test_parse_arguments_inline_rules(monkeypatch):
     monkeypatch.setattr("jacoco_filter.cli.FilterRule.is_valid_line", lambda line: True)
     monkeypatch.setattr("jacoco_filter.cli.FilterRule.parse", lambda line: f"PARSED({line})")
 
-    result = parse_arguments()
+    result = evaluate_parsed_arguments(parse_arguments())
 
     assert result["inputs"] == ["target/a.xml"]
     assert result["rules"] == ["PARSED(CLASS:com.example.*)"]
@@ -113,7 +113,7 @@ def test_parse_arguments_inline_rules(monkeypatch):
 def test_parse_arguments_missing_inputs(monkeypatch, caplog):
     monkeypatch.setattr(sys, "argv", ["jacoco-filter"])
     with pytest.raises(SystemExit) as e:
-        parse_arguments()
+        evaluate_parsed_arguments(parse_arguments())
 
     assert e.value.code == 1
     assert "Either --inputs or a valid --config file must be provided" in caplog.text
@@ -126,7 +126,7 @@ def test_parse_arguments_no_inputs_in_config(monkeypatch, caplog):
     # avoid rule processing
     monkeypatch.setattr("jacoco_filter.cli.FilterRule.is_valid_line", lambda line: False)
 
-    result = parse_arguments()
+    result = evaluate_parsed_arguments(parse_arguments())
 
     assert result["inputs"] == []
     assert "No input files provided" in caplog.text
@@ -143,7 +143,7 @@ def test_parse_arguments_uses_config_exclude_paths(monkeypatch):
     monkeypatch.setattr("jacoco_filter.cli.load_config", lambda _: config_data)
     monkeypatch.setattr("jacoco_filter.cli.FilterRule.is_valid_line", lambda line: False)
 
-    result = parse_arguments()
+    result = evaluate_parsed_arguments(parse_arguments())
     assert result["exclude_paths"] == ["**/generated/**"]
 
 
@@ -165,7 +165,7 @@ def test_parse_arguments_exclude_paths_from_cli(monkeypatch):
     monkeypatch.setattr("jacoco_filter.cli.load_config", lambda _: {})
     monkeypatch.setattr("jacoco_filter.cli.load_filter_rules", lambda _: [])
 
-    result = parse_arguments()
+    result = evaluate_parsed_arguments(parse_arguments())
 
     assert result["exclude_paths"] == ["**/test/**", "**/generated/**"]
 
@@ -181,7 +181,7 @@ def test_parse_arguments_skips_comment_rules(monkeypatch, caplog):
     monkeypatch.setattr("jacoco_filter.cli.FilterRule.is_valid_line", lambda line: True)
     monkeypatch.setattr("jacoco_filter.cli.FilterRule.parse", lambda line: f"PARSED({line})")
 
-    result = parse_arguments()
+    result = evaluate_parsed_arguments(parse_arguments())
 
     assert result["rules"] == ["PARSED(CLASS:com.example.*)"]
     assert "# this is a comment" not in str(result["rules"])
@@ -199,7 +199,7 @@ def test_parse_arguments_skips_invalid_rule_lines(monkeypatch, caplog):
     # Force the line to be considered invalid
     monkeypatch.setattr("jacoco_filter.cli.FilterRule.is_valid_line", lambda _: False)
 
-    result = parse_arguments()
+    result = evaluate_parsed_arguments(parse_arguments())
 
     assert result["rules"] == []
     assert "Skipping invalid rule rule: 'INVALID LINE'" in caplog.text
@@ -222,7 +222,7 @@ def test_parse_arguments_handles_parse_exception(monkeypatch, caplog):
 
     monkeypatch.setattr("jacoco_filter.cli.FilterRule.parse", raise_parse_error)
 
-    result = parse_arguments()
+    result = evaluate_parsed_arguments(parse_arguments())
 
     assert result["rules"] == []
     assert "Failed to parse rule rule 'CLASS:com.example.*': Mock parse error" in caplog.text

@@ -11,17 +11,27 @@ class DummyMethod:
 
 
 class DummyClass:
-    def __init__(self, methods, counters, name="C"):
+    def __init__(self, methods, counters, name="C", source_filename="S"):
         self.methods = methods
+        self.name = name
+        self.source_filename = source_filename
         self.counters = counters
         self.xml_element = etree.Element("class", name=name)
         for m in methods:
             self.xml_element.append(m.xml_element)
 
 
+class DummySourceFile:
+    def __init__(self, counters, name="S"):
+        self.counters = counters
+        self.name = name
+        self.xml_element = etree.Element("sourcefile", name=name)
+
+
 class DummyPackage:
-    def __init__(self, classes, counters, name="p"):
+    def __init__(self, classes, sourcefiles, counters, name="p"):
         self.classes = classes
+        self.sourcefiles = sourcefiles
         self.counters = counters
         self.xml_element = etree.Element("package", name=name)
         for c in classes:
@@ -90,7 +100,11 @@ def test_apply_updates_all_levels():
         make_counter("BRANCH", 1, 1),
         make_counter("INSTRUCTION", 0, 0),
     ])
-    p1 = DummyPackage([c1], counters=[
+    s1 = DummySourceFile(counters=[
+        make_counter("BRANCH", 1, 1),
+        make_counter("INSTRUCTION", 0, 0),
+    ])
+    p1 = DummyPackage([c1], [s1], counters=[
         make_counter("CLASS", 1, 1),
         make_counter("INSTRUCTION", 0, 0),
     ])
