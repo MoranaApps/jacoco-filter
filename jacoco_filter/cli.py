@@ -76,8 +76,17 @@ def parse_arguments() -> argparse.Namespace:
 
     return parser.parse_args()
 
+
 def evaluate_parsed_arguments(args: argparse.Namespace) -> dict:
-    # Enforce that at least one of --inputs or --config must be provided
+    """
+    Evaluates the parsed command-line arguments and merges them with the configuration file if provided.
+
+    Parameters:
+        args (argparse.Namespace): The parsed command-line arguments.
+
+    Returns:
+        dict: A dictionary containing the merged configuration.
+    """
     if not args.inputs and not args.config:
         logger.error("Either --inputs or a valid --config file must be provided.")
         sys.exit(1)

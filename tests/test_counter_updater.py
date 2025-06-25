@@ -111,6 +111,8 @@ def test_apply_updates_all_levels():
 
     report = JacocoReport(xml_element=etree.Element("report"))
     report.packages = [p1]
+    report.counters.append(p1.counters[0])
+    report.counters.append(p1.counters[1])
 
     # Add package XML structure
     report.xml_element.append(p1.xml_element)
@@ -118,10 +120,10 @@ def test_apply_updates_all_levels():
     updater.apply(report)
 
     # Report-level aggregated counters should sum all instruction counters
-    assert len(report.counters) == 1
-    assert report.counters[0].type == "INSTRUCTION"
-    assert report.counters[0].missed == 8
-    assert report.counters[0].covered == 17
+    assert len(report.counters) == 2
+    assert report.counters[1].type == "INSTRUCTION"
+    assert report.counters[1].missed == 8
+    assert report.counters[1].covered == 17
 
     # All non-INSTRUCTION counters should be zeroed
     for pkg in report.packages:

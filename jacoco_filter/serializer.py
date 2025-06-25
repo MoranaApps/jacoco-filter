@@ -1,6 +1,7 @@
 """
 This module provides functionality to serialize a JacocoReport object to an XML file.
 """
+
 import logging
 from pathlib import Path
 from lxml import etree
@@ -26,11 +27,5 @@ class ReportSerializer:
         Returns:
             None
         """
-
-        # DEBUG
-        for package in self.report.packages:
-            for sourcefile in package.sourcefiles:
-                logger.debug("Source file '%s' counters: %s", sourcefile.name, sourcefile.counters)
-
         tree = etree.ElementTree(self.report.xml_element)
         tree.write(str(output_path), encoding="utf-8", pretty_print=True, xml_declaration=True)

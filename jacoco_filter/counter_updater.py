@@ -1,6 +1,7 @@
 """
 This module provides functionality to update Jacoco counters in a report.
 """
+
 import logging
 
 import lxml.etree as ET
@@ -170,7 +171,8 @@ class CounterUpdater:
                         total_missed += counter.missed
                         total_covered += counter.covered
 
-        logger.debug("Aggregated counters for source file '%s': missed=%d, covered=%d", sourcefile, total_missed, total_covered)
+        logger.debug(
+            "Aggregated counters for source file '%s': missed=%d, covered=%d", sourcefile, total_missed, total_covered
+        )
 
         return total_missed, total_covered
-

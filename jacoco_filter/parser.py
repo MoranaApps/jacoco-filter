@@ -42,15 +42,19 @@ class JacocoParser:
             report.packages.append(pkg)
 
             for sourcefile_elem in pkg_elem.findall("sourcefile"):
-                cls = SourceFile(xml_element=sourcefile_elem, name=sourcefile_elem.get("name") or "")
-                pkg.sourcefiles.append(cls)
+                cls_sf = SourceFile(xml_element=sourcefile_elem, name=sourcefile_elem.get("name") or "")
+                pkg.sourcefiles.append(cls_sf)
 
                 for counter_elem in sourcefile_elem.findall("counter"):
                     counter = Counter.from_xml(counter_elem)
-                    cls.counters.append(counter)
+                    cls_sf.counters.append(counter)
 
             for cls_elem in pkg_elem.findall("class"):
-                cls = Class(xml_element=cls_elem, name=cls_elem.get("name") or "", source_filename=cls_elem.get("sourcefilename") or "")
+                cls: Class = Class(
+                    xml_element=cls_elem,
+                    name=cls_elem.get("name") or "",
+                    source_filename=cls_elem.get("sourcefilename") or "",
+                )
                 pkg.classes.append(cls)
 
                 for meth_elem in cls_elem.findall("method"):
