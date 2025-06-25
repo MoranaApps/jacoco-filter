@@ -97,7 +97,6 @@ class CounterUpdater:
 
         return updated_packages
 
-
     def _remove_zero_coverage_sourcefiles(self, package) -> list:
         """
         Remove <sourcefile> elements from the XML and model if their instruction counter has 0 missed and 0 covered.
