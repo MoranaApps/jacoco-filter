@@ -45,7 +45,10 @@ class CounterUpdater:
                 cls.counters = self._aggregate_instruction_counters(cls.methods)
 
             for sourcefile in package.sourcefiles:
+                logger.debug("Processing source file '%s' in package '%s'", sourcefile.name, package.name)
+                logger.debug("Counters before aggregation: %s", sourcefile.counters)
                 sourcefile.counters = self._aggregate_instruction_counters_for_sourcefile(sourcefile.name, package.classes)
+                logger.debug("Counters after aggregation: %s", sourcefile.counters)
 
             package.counters = self._aggregate_instruction_counters(package.classes)
 
