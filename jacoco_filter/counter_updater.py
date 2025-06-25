@@ -70,6 +70,34 @@ class CounterUpdater:
                     counter.xml_element.set("missed", str(mis))
                     counter.xml_element.set("covered", str(cov))
 
+        report.packages = self._remove_zero_coverage_packages(report)
+
+    def _remove_zero_coverage_packages(self, report: JacocoReport) -> list:
+        """
+        Remove <package> elements from the XML and model if their instruction counter has 0 missed and 0 covered.
+
+        Parameters:
+            report (JacocoReport): The report containing packages.
+
+        Returns:
+            list: A list of packages with non-zero instruction coverage.
+        """
+        updated_packages = []
+
+        for package in report.packages:
+            for counter in package.counters:
+                if counter.type == "INSTRUCTION" and counter.missed == 0 and counter.covered == 0:
+                    logger.debug("Removing package '%s' with 0 instruction coverage", package.name)
+                    if package.xml_element is not None:
+                        parent = package.xml_element.getparent()
+                        if parent is not None:
+                            parent.remove(package.xml_element)
+            else:
+                updated_packages.append(package)
+
+        return updated_packages
+
+
     def _remove_zero_coverage_sourcefiles(self, package) -> list:
         """
         Remove <sourcefile> elements from the XML and model if their instruction counter has 0 missed and 0 covered.
@@ -86,9 +114,7 @@ class CounterUpdater:
             remove = False
             for counter in sourcefile.counters:
                 if counter.type == "INSTRUCTION":
-                    mis, cov = self._aggregate_instruction_counters_for_sourcefile(
-                        sourcefile.name, package.classes
-                    )
+                    mis, cov = self._aggregate_instruction_counters_for_sourcefile(sourcefile.name, package.classes)
                     counter.missed = mis
                     counter.covered = cov
 
