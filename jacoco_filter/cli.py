@@ -35,7 +35,7 @@ def load_config(config_path: Path) -> dict:
         return tomli.load(f)
 
 
-def parse_arguments() -> dict:
+def parse_arguments() -> argparse.Namespace:
     """
     Parses command-line arguments and merges them with the configuration file if provided.
 
@@ -74,9 +74,9 @@ def parse_arguments() -> dict:
         help="Enable verbose logging (DEBUG level)",
     )
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    # -----------
+def evaluate_parsed_arguments(args: argparse.Namespace) -> dict:
     # Enforce that at least one of --inputs or --config must be provided
     if not args.inputs and not args.config:
         logger.error("Either --inputs or a valid --config file must be provided.")

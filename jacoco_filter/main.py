@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 import traceback
 
-from jacoco_filter.cli import parse_arguments, resolve_globs, apply_excludes
+from jacoco_filter.cli import parse_arguments, resolve_globs, apply_excludes, evaluate_parsed_arguments
 from jacoco_filter.logging_config import setup_logging
 from jacoco_filter.model import JacocoReport
 from jacoco_filter.parser import JacocoParser
@@ -24,9 +24,11 @@ def main():
         None
     """
     try:
-        setup_logging(args["verbose"])
+        parsed_args = parse_arguments()
+        setup_logging(parsed_args["verbose"])
         logger = logging.getLogger(__name__)
-        args = parse_arguments()
+
+        args = evaluate_parsed_arguments(parsed_args)
         root_dir = Path.cwd()
 
         logger.info("jacoco-filter started")
