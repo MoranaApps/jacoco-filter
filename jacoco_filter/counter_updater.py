@@ -1,10 +1,14 @@
 """
 This module provides functionality to update Jacoco counters in a report.
 """
+import logging
 
 import lxml.etree as ET
 
 from jacoco_filter.model import JacocoReport, Counter
+
+
+logger = logging.getLogger(__name__)
 
 
 class CounterUpdater:
@@ -153,11 +157,15 @@ class CounterUpdater:
         total_covered = 0
 
         for cls in classes:
+            logger.debug("Processing class '%s' for source file '%s'", cls.name, sourcefile)
             if cls.source_filename == sourcefile:
+                logger.debug("Class '%s' matches source file '%s'", cls.name, sourcefile)
                 for counter in cls.counters:
                     if counter.type == "INSTRUCTION":
                         total_missed += counter.missed
                         total_covered += counter.covered
+
+        logger.debug("Aggregated counters for source file '%s': missed=%d, covered=%d", sourcefile, total_missed, total_covered)
 
         return [
             Counter(
