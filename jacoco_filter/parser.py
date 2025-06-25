@@ -45,6 +45,10 @@ class JacocoParser:
                 cls = SourceFile(xml_element=sourcefile_elem, name=sourcefile_elem.get("name") or "")
                 pkg.sourcefiles.append(cls)
 
+                for counter_elem in sourcefile_elem.findall("counter"):
+                    counter = Counter.from_xml(counter_elem)
+                    cls.counters.append(counter)
+
             for cls_elem in pkg_elem.findall("class"):
                 cls = Class(xml_element=cls_elem, name=cls_elem.get("name") or "", source_filename=cls_elem.get("sourcefilename") or "")
                 pkg.classes.append(cls)
