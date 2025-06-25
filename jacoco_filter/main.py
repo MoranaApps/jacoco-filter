@@ -25,7 +25,7 @@ def main():
     """
     try:
         parsed_args = parse_arguments()
-        setup_logging(parsed_args["verbose"])
+        setup_logging(parsed_args.verbose)
         logger = logging.getLogger(__name__)
 
         args = evaluate_parsed_arguments(parsed_args)
