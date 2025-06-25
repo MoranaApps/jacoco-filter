@@ -51,6 +51,10 @@ class CounterUpdater:
                         counter.missed = mis
                         counter.covered = cov
 
+                        if counter.xml_element is not None:
+                            counter.xml_element.set("missed", str(mis))
+                            counter.xml_element.set("covered", str(cov))
+
             package.counters = self._aggregate_instruction_counters(package.classes)
 
         for counter in report.counters:
