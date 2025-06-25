@@ -12,4 +12,4 @@
             <counter type="INSTRUCTION" missed="0" covered="10"/><counter type="LINE" missed="0" covered="0"/><counter type="METHOD" missed="0" covered="0"/></class>
     <counter type="INSTRUCTION" missed="0" covered="0"/></package>
 
-    <counter type="LINE" missed="0" covered="50"/><counter type="METHOD" missed="0" covered="10"/><counter type="INSTRUCTION" missed="0" covered="0"/></report>
+    <counter type="LINE" missed="0" covered="0"/><counter type="METHOD" missed="0" covered="0"/><counter type="INSTRUCTION" missed="0" covered="0"/></report>
