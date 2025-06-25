@@ -24,11 +24,11 @@ def main():
         None
     """
     try:
-        parsed_args = parse_arguments()
-        setup_logging(parsed_args.verbose)
+        parsed_args, config = parse_arguments()
+        setup_logging(parsed_args.verbose or config.get("verbose", False))
         logger = logging.getLogger(__name__)
 
-        args = evaluate_parsed_arguments(parsed_args)
+        args = evaluate_parsed_arguments(parsed_args, config)
         root_dir = Path.cwd()
 
         logger.info("jacoco-filter started")

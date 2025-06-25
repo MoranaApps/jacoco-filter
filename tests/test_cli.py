@@ -91,7 +91,7 @@ def test_parse_arguments_with_inputs_and_rules_file(monkeypatch, tmp_path):
     assert result["verbose"] is False
 
 
-def test_parse_arguments_inline_rules(monkeypatch):
+def test_parse_arguments_rules(monkeypatch):
     raw_config = {
         "inputs": ["target/a.xml"],
         "rules": ["CLASS:com.example.*"],
