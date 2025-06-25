@@ -69,11 +69,6 @@ def main():
             updater = CounterUpdater()
             updater.apply(report)
 
-            # DEBUG
-            for package in report.packages:
-                for sourcefile in package.sourcefiles:
-                    logger.debug("Source file '%s' counters: %s", sourcefile.name, sourcefile.counters)
-
             filtered_file = file.with_name(file.stem + ".filtered.xml")
 
             logger.info("Saving output to %s", filtered_file)

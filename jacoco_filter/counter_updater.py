@@ -45,11 +45,19 @@ class CounterUpdater:
                 cls.counters = self._aggregate_instruction_counters(cls.methods)
 
             for sourcefile in package.sourcefiles:
-                sourcefile.counters = self._aggregate_instruction_counters_for_sourcefile(sourcefile.name, package.classes)
+                for counter in sourcefile.counters:
+                    if counter.type == "INSTRUCTION":
+                        mis, cov = self._aggregate_instruction_counters_for_sourcefile(sourcefile.name, package.classes)
+                        counter.missed = mis
+                        counter.covered = cov
 
             package.counters = self._aggregate_instruction_counters(package.classes)
 
-        report.counters = self._aggregate_instruction_counters_for_report(report)
+        for counter in report.counters:
+            if counter.type == "INSTRUCTION":
+                mis, cov = self._aggregate_instruction_counters_for_report(report)
+                counter.missed = mis
+                counter.covered = cov
 
     def _clean_non_instruction_counters(self, counters: list[Counter]):
         """
@@ -114,7 +122,7 @@ class CounterUpdater:
             )
         ]
 
-    def _aggregate_instruction_counters_for_report(self, report: JacocoReport) -> list[Counter]:
+    def _aggregate_instruction_counters_for_report(self, report: JacocoReport) -> tuple:
         """
         Aggregate instruction counters for the entire report.
         During this process, it sums up all instruction counters across all packages and skip source files.
@@ -134,16 +142,9 @@ class CounterUpdater:
                         total_missed += counter.missed
                         total_covered += counter.covered
 
-        return [
-            Counter(
-                type="INSTRUCTION",
-                missed=total_missed,
-                covered=total_covered,
-                xml_element=None,  # No XML element for the report level
-            )
-        ]
+        return total_missed, total_covered
 
-    def _aggregate_instruction_counters_for_sourcefile(self, sourcefile: str, classes: list) -> list[Counter]:
+    def _aggregate_instruction_counters_for_sourcefile(self, sourcefile: str, classes: list) -> tuple:
         """
         Aggregate instruction counters for a specific source file.
 
@@ -167,11 +168,5 @@ class CounterUpdater:
 
         logger.debug("Aggregated counters for source file '%s': missed=%d, covered=%d", sourcefile, total_missed, total_covered)
 
-        return [
-            Counter(
-                type="INSTRUCTION",
-                missed=total_missed,
-                covered=total_covered,
-                xml_element=None,  # No XML element for the source file level
-            )
-        ]
+        return total_missed, total_covered
+
