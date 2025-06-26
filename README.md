@@ -29,10 +29,35 @@ A command-line tool to filter [JaCoCo](https://www.jacoco.org/jacoco/) XML code 
 
 ## Quick Start
 
+### Command Line Usage
+
 Run the tool directly with CLI arguments:
 
 ```bash
 python3 main.py --inputs "**/jacoco.xml" --rules rules.txt
+```
+
+### Github Actions Usage
+
+Run the tool in a GitHub Actions workflow:
+
+```yaml
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5.1.1
+        with:
+          python-version: '3.12'
+
+      - name: Run jacoco-filter
+        uses: MoranaApps/jacoco-filter@v1.0.0
+        with:
+          config: jacoco_filter.toml
+          verbose: true
 ```
 
 ### Sample `rules.txt`
@@ -57,7 +82,7 @@ You can use either:
 
 > Note:
 > - Either `--inputs` or `[inputs]` in config must be provided.
-> - Either `--rules` or `inline_rules` must be provided.
+> - Either `--rules` or `rules` must be provided.
 
 ### CLI Options
 
@@ -75,7 +100,7 @@ You can use either:
 
 ### Configuration File: `jacoco_filter.toml`
 
-Use this file to define inputs, exclusion rules, and inline filtering rules.
+Use this file to define inputs, exclusion rules, and filtering rules.
 
 #### Example
 
@@ -89,7 +114,7 @@ exclude_paths = [
   "**/module_A/**"
 ]
 
-inline_rules = [
+rules = [
   "file:*Spec.scala",
   "file:HelperUtil.scala",
   "class:com.example.MyClass",

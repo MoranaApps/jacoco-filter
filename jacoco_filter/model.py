@@ -47,7 +47,19 @@ class Class:
     """
 
     name: str
+    source_filename: str
     methods: list[Method] = field(default_factory=list)
+    counters: list[Counter] = field(default_factory=list)
+    xml_element: Any = None
+
+
+@dataclass
+class SourceFile:
+    """
+    Represents a sourcefile in a JaCoCo report.
+    """
+
+    name: str
     counters: list[Counter] = field(default_factory=list)
     xml_element: Any = None
 
@@ -60,6 +72,7 @@ class Package:
 
     name: str
     classes: list[Class] = field(default_factory=list)
+    sourcefiles: list[SourceFile] = field(default_factory=list)
     counters: list[Counter] = field(default_factory=list)
     xml_element: Any = None
 

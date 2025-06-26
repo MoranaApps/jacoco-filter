@@ -6,8 +6,7 @@ import logging
 
 from pathlib import Path
 from lxml import etree
-from jacoco_filter.model import JacocoReport, Package, Class, Method, Counter
-
+from jacoco_filter.model import JacocoReport, Package, Class, Method, Counter, SourceFile
 
 logger = logging.getLogger(__name__)
 
@@ -34,12 +33,28 @@ class JacocoParser:
 
         report = JacocoReport(xml_element=root)
 
+        for counter_elem in root.findall("counter"):
+            counter = Counter.from_xml(counter_elem)
+            report.counters.append(counter)
+
         for pkg_elem in root.findall("package"):
             pkg = Package(xml_element=pkg_elem, name=pkg_elem.get("name") or "")
             report.packages.append(pkg)
 
+            for sourcefile_elem in pkg_elem.findall("sourcefile"):
+                cls_sf = SourceFile(xml_element=sourcefile_elem, name=sourcefile_elem.get("name") or "")
+                pkg.sourcefiles.append(cls_sf)
+
+                for counter_elem in sourcefile_elem.findall("counter"):
+                    counter = Counter.from_xml(counter_elem)
+                    cls_sf.counters.append(counter)
+
             for cls_elem in pkg_elem.findall("class"):
-                cls = Class(xml_element=cls_elem, name=cls_elem.get("name") or "")
+                cls: Class = Class(
+                    xml_element=cls_elem,
+                    name=cls_elem.get("name") or "",
+                    source_filename=cls_elem.get("sourcefilename") or "",
+                )
                 pkg.classes.append(cls)
 
                 for meth_elem in cls_elem.findall("method"):

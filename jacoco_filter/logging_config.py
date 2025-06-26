@@ -27,6 +27,7 @@ def setup_logging(is_verbose: bool = False) -> None:
     sys.stdout.flush()
 
     logging.info("Logging configuration set up.")
+    logging.debug("Logging configuration set up.")
 
     if is_verbose:
         logging.debug("Debug logging enabled.")

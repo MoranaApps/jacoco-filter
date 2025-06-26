@@ -2,9 +2,13 @@
 This module provides functionality to serialize a JacocoReport object to an XML file.
 """
 
+import logging
 from pathlib import Path
 from lxml import etree
 from jacoco_filter.model import JacocoReport
+
+
+logger = logging.getLogger(__name__)
 
 
 class ReportSerializer:

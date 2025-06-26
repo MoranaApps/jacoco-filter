@@ -35,7 +35,7 @@ def load_config(config_path: Path) -> dict:
         return tomli.load(f)
 
 
-def parse_arguments() -> dict:
+def parse_arguments() -> tuple[argparse.Namespace, dict]:
     """
     Parses command-line arguments and merges them with the configuration file if provided.
 
@@ -75,14 +75,27 @@ def parse_arguments() -> dict:
     )
 
     args = parser.parse_args()
+    config = load_config(args.config) if args.config else {}
 
-    # -----------
-    # Enforce that at least one of --inputs or --config must be provided
+    return args, config
+
+
+def evaluate_parsed_arguments(args: argparse.Namespace, config: dict) -> dict:
+    """
+    Evaluates the parsed command-line arguments and merges them with the configuration file if provided.
+
+    Parameters:
+        args (argparse.Namespace): The parsed command-line arguments.
+        config (dict): The loaded configuration dictionary.
+
+    Returns:
+        dict: A dictionary containing the merged configuration.
+    """
     if not args.inputs and not args.config:
         logger.error("Either --inputs or a valid --config file must be provided.")
         sys.exit(1)
 
-    config = load_config(args.config) if args.config else {}
+    logger.info("Config values: '%s'", str(config))
 
     # CLI has priority over config
     merged = {}
@@ -115,7 +128,7 @@ def parse_arguments() -> dict:
 
     elif "rules" in config:
         # when rules are defined in the config
-        logger.info("   Loaded inline_rules from config")
+        logger.info("   Loaded rules from config")
         for raw_line in config.get("rules", []):
             stripped = raw_line.strip()
             if stripped.startswith("#"):
